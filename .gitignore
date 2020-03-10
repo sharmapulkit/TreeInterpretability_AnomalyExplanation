@@ -1,2 +1,5 @@
 datasets/*.csv
 *.swp
+*slurm*
+*.mdl.pk
+*.bk.py
