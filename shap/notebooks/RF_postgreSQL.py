@@ -30,7 +30,7 @@ class TreeRegression():
 		min_max_scaler = preprocessing.MinMaxScaler()
 		Y_normalized = Y.copy()
 
-		for target in target_columns:
+		for target in Y.columns:
 		    col_min = Y_normalized.loc[:, target].min()
 		    col_max = Y_normalized.loc[:, target].max()
 		    Y_normalized[target] = (Y_normalized.loc[:, target] - col_min)/(col_max - col_min)
@@ -50,7 +50,7 @@ class TreeRegression():
 		return logY_normalized
 
 
-	######### Train Random Forest Regressor of the above data
+	######### Train Random Forest Regressor
 	def trainRF(self, X_train, Y_train, current_target, rf_n_estimators=200, rf_max_depth=20):
 		rf = RandomForestRegressor(n_estimators=rf_n_estimators, max_depth=rf_max_depth)
 		rf.fit(X_train, Y_train.loc[:, current_target])
@@ -149,55 +149,100 @@ def print_spearmanr(ranking1, ranking2):
 		ps.append(p)
 	print(pd.Series(coeffs).describe())
 
+############## DEFINE MACRO VARIABLES #############
+#### Dataset path ####
+PATH='~/cs696ds/TreeInterpretability_AnomalyExplanation/'
+print("Loading dataset...")
+data = pd.read_csv(PATH+"datasets/postgres-results.csv")
+print(data.shape)
 
-if __name__=="__main__":
-	#### Dataset path ####
-	PATH='~/cs696ds/TreeInterpretability_AnomalyExplanation/'
-	print("Loading dataset...")
-	data = pd.read_csv(PATH+"datasets/postgres-results.csv")
-	print(data.shape)
+all_feats = list(data)
 
-	all_feats = list(data)
-	
-	####### Define Output, Covariate and Treatment columns names
-	target_columns = ['local_written_blocks', 'temp_written_blocks', 'shared_hit_blocks', 'temp_read_blocks', 'local_read_blocks', 'runtime', 'shared_read_blocks']
-	treatment_columns = ['index_level', 'page_cost', 'memory_level']
-	covariate_columns = ['rows', 'creation_year', 'num_ref_tables', 'num_joins', 'num_group_by', 'queries_by_user', 'length_chars', 'total_ref_rows', 'local_hit_blocks', 'favorite_count']
-	feature_columns = covariate_columns
-	feature_columns.extend(treatment_columns)
+####### Define Output, Covariate and Treatment columns names
+target_columns = ['local_written_blocks', 'temp_written_blocks', 'shared_hit_blocks', 'temp_read_blocks', 'local_read_blocks', 'runtime', 'shared_read_blocks']
+treatment_columns = ['index_level', 'page_cost', 'memory_level']
+covariate_columns = ['rows', 'creation_year', 'num_ref_tables', 'num_joins', 'num_group_by', 'queries_by_user', 'length_chars', 'total_ref_rows', 'local_hit_blocks', 'favorite_count']
+feature_columns = covariate_columns.copy()
+feature_columns.extend(treatment_columns)
+######################################################
 
-	train_size = int(data.shape[0]*0.7)
-	X_train = data[feature_columns][:train_size]
-	Y_train = data[target_columns][:train_size]
+####### Log normalize targets ###########
+def log_normalize(self, data):
+	logData_normalized = data.copy()
+	logData_normalized = np.log(logData_normalized + epsilon)
+	for col in list(data.columns):
+	    col_min = logData_normalized.loc[:, col].min()
+	    col_max = logData_normalized.loc[:, col].max()
+	    logData_normalized[col]  = (logData_normalized.loc[:, col] - col_min)/(col_max - col_min)
+	return logData_normalized
+
+
+def preprocessData(data, feature_columns, target_columns):	
+	train_size = int(data.shape[0]*0.7)	
+	X_train = logData_normalized[feature_columns][:train_size]
+	Y_train = logData_normalized[target_columns][:train_size]
 
 	X_test = data[feature_columns][train_size:]
 	Y_test = data[target_columns][train_size:]
+	logYtrain_normalized = log_normalize(Y_train)
+	logYtest_normalized = log_normalize(Y_test)
+	return X_train, logYtrain_normalized, X_test, logYtest_normalized
 
-	treereg = TreeRegression(PATH)
-	
-	logY_train_normalized = treereg.log_normalize(Y_train)
-	logY_test_normalized  = treereg.log_normalize(Y_test)
+def preprocessDataTreament(data, feature_columns, target_columns, treatment_columns):	
+	train_size = int(data.shape[0]*0.7)
+
+	l = [0, 1, 2]
+	treatment_combinations = list(itertools.product(l, repeat=3))
+	X_trains, Y_trains, X_tests, Y_tests, tr_combs = [], [], [], [], []
+	for t_comb in treatment_combinations:
+		data_tr = data[(data.loc[:, treatment_columns[0]] == t_comb[0]) & \
+			  (data.loc[:, treatment_columns[1]] == t_comb[1]) & \
+			  (data.loc[:, treatment_columns[2]] == t_comb[2])]
+		treatX_train = logData_normalized[feature_columns][:train_size]
+		treatY_train = logData_normalized[target_columns][:train_size]
+
+		treatX_test = data[feature_columns][train_size:]
+		treatY_test = data[target_columns][train_size:]
+
+		X_trains.append(treatX_train)
+		Y_trains.append(treatY_train)
+		X_tests.append(treatX_test)
+		Y_tests.append(treatY_test)
+		tr_combs.append(t_comb)
+
+	logYtrain_normalized = [log_normalize(x) for x in Y_trains]
+	logYtest_normalized = [log_normalize(x) for x in Y_tests]
+	return X_trains, logYtrain_normalized, X_tests, logYtest_normalized, tr_combs
+
+
+def mainTreatments():
+	treereg = TreeRegression(PATH)		
+	start_time = time.time()
+	X_trains, logY_train_normalizeds, X_tests, logY_test_normalizeds = preprocessDataTreatment(data, feature_columns, target_columns, treatment_columns)
+	data_preprocessed_time = time.time()
+	print("Time to preprocess:", data_preprocessed_time - start_time)
 
 	current_target = 'runtime'
 	rf_n_estimators = 200
-	rf_max_depth = 20
+	rf_max_depth = 10
 
-	SAVE_RF = False
-	model_filename = "RF_postgres_Nest{}_maxD{}_{}".format(rf_n_estimators, rf_max_depth, 'runtime')
-	data_preprocessed_time = time.time()
-	if (SAVE_RF):
-		print("Training Random Forest...")
-		rf = treereg.trainRF(X_train, logY_train_normalized, current_target, rf_n_estimators, rf_max_depth)
-		rf_trained_time = time.time()
-		pk.dump(rf, open(model_filename, 'wb'))
-		model_file_dumped = time.time()
-		print("Time to Train RF:", rf_trained_time - data_preprocessed_time)
-	else:
-		rf = pk.load(open(model_filename, 'rb'))	
-		loaded_model = time.time()
-		print("Time to load model:", loaded_model - data_preprocessed_time)
+	SAVE_RF = True
+	for (Xtr, logYtr, Xte, logYte, tr_comb) in zip(X_trains, logY_train_normlizeds, X_tests, logY_test_normalizeds, trCombs):
+		model_filename = "RF_postgres_Nest{}_maxD{}_{}_tr{}{}{}".format(rf_n_estimators, rf_max_depth, 'runtime', tr_comb[0], tr_comb[1], tr_comb[2])
+		if (SAVE_RF):
+			print("Training Random Forest...")
+			rf = treereg.trainRF(Xtr, logYtr, current_target, rf_n_estimators, rf_max_depth)
+			rf_trained_time = time.time()
+			pk.dump(rf, open(model_filename, 'wb'))
+			model_file_dumped = time.time()
+			print("Time to Train RF:", rf_trained_time - data_preprocessed_time)
+		else:
+			rf = pk.load(open(model_filename, 'rb'))	
+			loaded_model = time.time()
+			print("Time to load model:", loaded_model - data_preprocessed_time)
 
 	#print("Train Evaluation....")
+	
 	#treereg.evaluateRF(X_train, logY_train_normalized, rf, current_target)
 	#print(Y_test.isna().sum())
 	#print(logY_test_normalized.isna().sum())
@@ -222,4 +267,58 @@ if __name__=="__main__":
 	print(ti_contribs.shape)
 	print(shap_values.shape)
 	print_spearmanr(ti_contribs, shap_values)
+
+def main():
+	treereg = TreeRegression(PATH)		
+	start_time = time.time()
+	X_trains, logY_train_normalizeds, X_tests, logY_test_normalizeds = preprocessDataTreatment(data, feature_columns, target_columns, treatment_columns)
+	data_preprocessed_time = time.time()
+	print("Time to preprocess:", data_preprocessed_time - start_time)
+
+	current_target = 'runtime'
+	rf_n_estimators = 200
+	rf_max_depth = 10
+
+	SAVE_RF = True
+	model_filename = "RF_postgres_Nest{}_maxD{}_{}".format(rf_n_estimators, rf_max_depth, 'runtime')
+	if (SAVE_RF):
+		print("Training Random Forest...")
+		rf = treereg.trainRF(X_train, logY_train_normalized, current_target, rf_n_estimators, rf_max_depth)
+		rf_trained_time = time.time()
+		pk.dump(rf, open(model_filename, 'wb'))
+		model_file_dumped = time.time()
+		print("Time to Train RF:", rf_trained_time - data_preprocessed_time)
+	else:
+		rf = pk.load(open(model_filename, 'rb'))	
+		loaded_model = time.time()
+		print("Time to load model:", loaded_model - data_preprocessed_time)
+
+	#print("Train Evaluation....")
 	
+	#treereg.evaluateRF(X_train, logY_train_normalized, rf, current_target)
+	#print(Y_test.isna().sum())
+	#print(logY_test_normalized.isna().sum())
+	print("Test Evaluation....")
+	#treereg.evaluateRF(X_test, logY_test_normalized, rf, current_target)
+	#print(X_test.shape)
+	#print(logY_test_normalized.loc[:, current_target].shape)
+	treereg.evaluateRF(X_test, Y_test.loc[:, current_target], rf, current_target)
+	treereg.evaluateRF(X_test, logY_test_normalized.loc[:, current_target], rf, current_target)
+	print("Evaluation time:", time.time() - loaded_model)
+	
+	evaluated_time = time.time()
+	ti_preds, ti_biases, ti_contribs = ti.predict(rf, X_test[:500])
+	ti_values_time = time.time()
+	print("Time for Tree Interpretation:", ti_values_time - evaluated_time)
+	
+	explainer = shap.TreeExplainer(rf)
+	shap_values = explainer.shap_values(X_test[:500])
+	shap_values_time = time.time()
+	print("Time for SHAP explaination values:", shap_values_time - ti_values_time)
+	
+	print(ti_contribs.shape)
+	print(shap_values.shape)
+	print_spearmanr(ti_contribs, shap_values)
+
+if __name__=="__main__":
+	main()	

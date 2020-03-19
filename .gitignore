@@ -3,3 +3,4 @@ datasets/*.csv
 *slurm*
 *.mdl.pk
 *.bk.py
+*.sw*
