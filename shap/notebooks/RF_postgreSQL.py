@@ -62,7 +62,7 @@ class DataLoader():
 		    self._data[target]  = (self._data.loc[:, target] - col_min) / (col_max - col_min)
 		return
 
-	def preprocessData(self, (train_frac, val_frac, test_frac) = (0.7, 0, 0.3)):
+	def preprocessData(self, train_frac=0.7, val_frac=0.0, test_frac=0.3):
 		train_size = int(data.shape[0]*train_frac)
 		val_size = int(data.shape[0]*val_frac)
 		test_size = int(data.shape[0]*test_frac)
@@ -79,7 +79,7 @@ class DataLoader():
 
 		return X_train, logYtrain_normalized, X_val, logYval_normalized, X_test, logYtest_normalized
 
-	def preprocessDataTreament(self, (train_frac, val_frac, test_frac) = (0.7, 0, 0.3)):
+	def preprocessDataTreatment(self, train_frac=0.7, val_frac=0.0, test_frac=0.3):
 		train_size = int(data.shape[0]*train_frac)
 		val_size = int(data.shape[0]*val_frac)
 		test_size = int(data.shape[0]*test_frac)
@@ -217,17 +217,20 @@ def log_normalize(self, data):
 def mainTreatments():
 	treereg = TreeRegression(PATH)		
 	start_time = time.time()
-	X_trains, logY_train_normalizeds, X_tests, logY_test_normalizeds = preprocessDataTreatment(data, feature_columns, target_columns, treatment_columns)
+	dataloader = DataLoader(PATH + "datasets/postgres-results.csv")
+ 
+	X_trains, logY_train_normalizeds, X_vals, logY_vals, X_tests, logY_test_normalizeds, tr_combos = dataloader.preprocessDataTreatment()
 	data_preprocessed_time = time.time()
 	print("Time to preprocess:", data_preprocessed_time - start_time)
 
 	current_target = 'runtime'
-	rf_n_estimators = 200
-	rf_max_depth = 10
+	rf_n_estimators = 100
+	rf_max_depth = 8
 
 	SAVE_RF = True
-	for (Xtr, logYtr, Xte, logYte, tr_comb) in zip(X_trains, logY_train_normlizeds, X_tests, logY_test_normalizeds, trCombs):
-		model_filename = "RF_postgres_Nest{}_maxD{}_{}_tr{}{}{}".format(rf_n_estimators, rf_max_depth, 'runtime', tr_comb[0], tr_comb[1], tr_comb[2])
+	outdir = PATH + "shap/notebooks/trainedNetworks/"
+	for (Xtr, logYtr, Xval, logYval, Xte, logYte, tr_comb) in zip(X_trains, logY_train_normlizeds, X_val, logY_vals, X_tests, logY_test_normalizeds, trCombs):
+		model_filename = outdir + "RF_postgres_Nest{}_maxD{}_{}_tr{}{}{}".format(rf_n_estimators, rf_max_depth, 'runtime', tr_comb[0], tr_comb[1], tr_comb[2])
 		if (SAVE_RF):
 			print("Training Random Forest...")
 			rf = treereg.trainRF(Xtr, logYtr, current_target, rf_n_estimators, rf_max_depth)
@@ -320,4 +323,4 @@ def main():
 	print_spearmanr(ti_contribs, shap_values)
 
 if __name__=="__main__":
-	main()	
+	mainTreatments()
