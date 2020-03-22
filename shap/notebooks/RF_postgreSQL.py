@@ -19,56 +19,125 @@ import time
 
 epsilon = 0.00001
 
-class TreeRegression():
-	def __init__(self, dataset_path):
-		self.dataset_path = dataset_path
-		
+############## DEFINE MACRO VARIABLES #############
+#### Dataset path ####
+PATH='~/cs696ds/TreeInterpretability_AnomalyExplanation/'
+print("Loading dataset...")
+data = pd.read_csv(PATH+"datasets/postgres-results.csv")
+print(data.shape)
 
-	####### Normalize columns of Y_train ########
-	def normalize_columns(self, Y):
-		x = data.values
-		min_max_scaler = preprocessing.MinMaxScaler()
-		Y_normalized = Y.copy()
+all_feats = list(data)
 
-		for target in Y.columns:
-		    col_min = Y_normalized.loc[:, target].min()
-		    col_max = Y_normalized.loc[:, target].max()
-		    Y_normalized[target] = (Y_normalized.loc[:, target] - col_min)/(col_max - col_min)
-		
+####### Define Output, Covariate and Treatment columns names
+target_columns = ['local_written_blocks', 'temp_written_blocks', 'shared_hit_blocks', 'temp_read_blocks', 'local_read_blocks', 'runtime', 'shared_read_blocks']
+treatment_columns = ['index_level', 'page_cost', 'memory_level']
+covariate_columns = ['rows', 'creation_year', 'num_ref_tables', 'num_joins', 'num_group_by', 'queries_by_user', 'length_chars', 'total_ref_rows', 'local_hit_blocks', 'favorite_count']
+feature_columns = covariate_columns.copy()
+feature_columns.extend(treatment_columns)
+######################################################
+
+
+class DataLoader():
+	def __init__(self, dataset_path, covariate_columns = [], treatment_columns = [], target_columns = []):
+		self._dataset_path = dataset_path
+		self._covariate_columns = covariate_columns
+		self._treatment_columns = treatment_columns
+		self._target_columns = target_columns
+		self._data = pd.read_csv(self._dataset_path)
+
+	####### Normalize columns ########
+	def normalize_columns(self, columns):
+		for c in columns:
+		    col_min = self._data.loc[:, target].min()
+		    col_max = self._data.loc[:, target].max()
+		    Y_normalized[c] = (Y_normalized.loc[:, c] - col_min)/(col_max - col_min)
 		return Y_normalized
 
+	####### Log normalize all columns ###########
+	def logNormalizeTargets(self):
+		self._data = np.log(self._data + epsilon)
+		for target in list(self._target_columns):
+		    col_min = self._data.loc[:, target].min()
+		    col_max = self._data.loc[:, target].max()
+		    self._data[target]  = (self._data.loc[:, target] - col_min) / (col_max - col_min)
+		return
 
-	####### Log normalize targets ###########
-	def log_normalize(self, data):
-		logY_normalized = data.copy()
-		logY_normalized = np.log(logY_normalized + epsilon)
-		for target in list(data.columns):
-		    col_min = logY_normalized.loc[:, target].min()
-		    col_max = logY_normalized.loc[:, target].max()
-		    logY_normalized[target]  = (logY_normalized.loc[:, target] - col_min)/(col_max - col_min)
+	def preprocessData(self, (train_frac, val_frac, test_frac) = (0.7, 0, 0.3)):
+		train_size = int(data.shape[0]*train_frac)
+		val_size = int(data.shape[0]*val_frac)
+		test_size = int(data.shape[0]*test_frac)
+		self.logNormalizeTargets()
+		
+		X_train = self._data[self._feature_columns][:train_size]
+		logYtrain_normalized = self._data[self._target_columns][:train_size]
 
-		return logY_normalized
+		X_val = self._data[self._feature_columns][train_size:train_size + val_size]
+		logYval_normalized = self._data[self._target_columns][train_size:train_size + val_size]
 
+		X_test = self._data[self._feature_columns][train_size + val_size:]
+		logYtest_normalized = self._data[self._target_columns][train_size + val_size:]
+
+		return X_train, logYtrain_normalized, X_val, logYval_normalized, X_test, logYtest_normalized
+
+	def preprocessDataTreament(self, (train_frac, val_frac, test_frac) = (0.7, 0, 0.3)):
+		train_size = int(data.shape[0]*train_frac)
+		val_size = int(data.shape[0]*val_frac)
+		test_size = int(data.shape[0]*test_frac)
+
+		l = [0, 1, 2]
+		treatment_combinations = list(itertools.product(l, repeat=3))
+		self.logNormalizeTargets()
+		X_trains, Y_trains, X_vals, Y_vals, X_tests, Y_tests = [], [], [], [], [], []
+		for t_comb in treatment_combinations:
+			data_tr = data[(data.loc[:, treatment_columns[0]] == t_comb[0]) & \
+					  (data.loc[:, treatment_columns[1]] == t_comb[1]) & \
+					  (data.loc[:, treatment_columns[2]] == t_comb[2])]
+			treatX_train = self._data[self._feature_columns][:train_size]
+			treatY_train = self._data[self._target_columns][:train_size]
+
+			treatX_val = self._data[self._feature_columns][train_size:train_size + val_size]
+			treatY_val = self._data[self._target_column][train_size:train_size + val_size]
+
+			treatX_test = self._data[self._feature_columns][train_size+val_size:]
+			treatY_test = self._data[self._target_columns][train_size+val_size:]
+
+			X_trains.append(treatX_train)
+			Y_trains.append(treatY_train)
+			X_vals.append(treatX_val)
+			Y_vals.append(treatY_val)
+			X_tests.append(treatX_test)
+			Y_tests.append(treatY_test)
+
+			tr_combs.append(t_comb)
+
+		return X_trains, Y_trains, X_vals, Y_vals, X_tests, Y_tests, treatment_combinations
+
+class TreeRegression():
+	def __init__(self, n_estimators=10, max_depth=10):
+		self.n_estimators = n_estimators
+		self.max_depth = max_depth
+		self.model = RandomForestRegressor(n_estimators, max_depth)
+		
 
 	######### Train Random Forest Regressor
 	def trainRF(self, X_train, Y_train, current_target, rf_n_estimators=200, rf_max_depth=20):
-		rf = RandomForestRegressor(n_estimators=rf_n_estimators, max_depth=rf_max_depth)
-		rf.fit(X_train, Y_train.loc[:, current_target])
-		return rf
+		self.model = RandomForestRegressor(n_estimators=rf_n_estimators, max_depth=rf_max_depth)
+		self.model.fit(X_train, Y_train.loc[:, current_target])
+		return
 
+	def inferRF(self, X_test):
+		Y_preds = self.model.predict(X_test)
+		return Y_preds
 
 	###### Get the accuracy of RandomForestRegression ########## 
 	########### TRAINING SET ############
-	def evaluateRF(self, X, Y_gt, model, current_target):
-		current_target_id = 5
-		Y_pred = model.predict(X)
-		print(Y_pred.shape)
-		print(Y_gt.shape)
-		print("Set MSE:", metrics.mean_absolute_error( Y_gt, Y_pred ) )
-		print("Set R2:", metrics.r2_score( Y_gt, Y_pred ))
+	def evaluateRF(self, Xtest, Ytest, current_target):
+		Ypred = self.model.predict(Xtest)
+		print("Set MSE:", metrics.mean_absolute_error( Ytest, Ypred ) )
+		print("Set R2:", metrics.r2_score( Ytest, Ypred ))
 
 
-	def grid_search_rf_parameters(self, X_train, Y_train, X_test, Y_test, current_target):
+	def grid_search_rf_parameters(self, X_train, Y_train, X_val, Y_val, current_target):
 		########## Grid Search for RF Training parameters
 		best_combo = (1200, 100)
 		best_combo_r2_test = -90000
@@ -81,7 +150,7 @@ class TreeRegression():
 			Y_train_pred = rf.predict(X_train)
 			print("Train Set MSE:", metrics.mean_absolute_error( \
 			                  np.log(Y_train_normalized.loc[:, current_target] + epsilon), Y_train_pred) )
-			print("Train Set R2:", metrics.r2_score( (Y_train_pred),                     np.log(Y_train_normalized.loc[:, current_target] + epsilon) ))
+			print("Train Set R2:", metrics.r2_score( (Y_train_pred), np.log(Y_train_normalized.loc[:, current_target] + epsilon) ))
 			###### Get the accuracy of RandomForestRegression ##########
 			########### TEST SET ############
 			Y_test_pred = rf.predict(X_test)
@@ -124,21 +193,6 @@ class TreeRegression():
 		print("XGB R2 Test :", r2_test_xgb)
 
 
-	def normalize_columns(self, Y_train):
-		## Normalize columns of Y_train
-		x = data.values
-		min_max_scaler = preprocessing.MinMaxScaler()
-		Y_normalized = data.copy()
-
-		for target in list(Y_train.columns):
-		    col_min = Y_normalized.loc[:, target].min()
-		    col_max = Y_normalized.loc[:, target].max()
-		    Y_normalized[target] = (Y_normalized.loc[:, target] - col_min)/(col_max - col_min)
-
-		Y_train_normalized = Y_normalized[:train_size]
-		Y_test_normalized = Y_normalized[train_size:]
-		return (Y_train_normalized, Y_test_normalized)
-
 
 from scipy.stats import spearmanr
 def print_spearmanr(ranking1, ranking2):
@@ -149,23 +203,6 @@ def print_spearmanr(ranking1, ranking2):
 		ps.append(p)
 	print(pd.Series(coeffs).describe())
 
-############## DEFINE MACRO VARIABLES #############
-#### Dataset path ####
-PATH='~/cs696ds/TreeInterpretability_AnomalyExplanation/'
-print("Loading dataset...")
-data = pd.read_csv(PATH+"datasets/postgres-results.csv")
-print(data.shape)
-
-all_feats = list(data)
-
-####### Define Output, Covariate and Treatment columns names
-target_columns = ['local_written_blocks', 'temp_written_blocks', 'shared_hit_blocks', 'temp_read_blocks', 'local_read_blocks', 'runtime', 'shared_read_blocks']
-treatment_columns = ['index_level', 'page_cost', 'memory_level']
-covariate_columns = ['rows', 'creation_year', 'num_ref_tables', 'num_joins', 'num_group_by', 'queries_by_user', 'length_chars', 'total_ref_rows', 'local_hit_blocks', 'favorite_count']
-feature_columns = covariate_columns.copy()
-feature_columns.extend(treatment_columns)
-######################################################
-
 ####### Log normalize targets ###########
 def log_normalize(self, data):
 	logData_normalized = data.copy()
@@ -175,44 +212,6 @@ def log_normalize(self, data):
 	    col_max = logData_normalized.loc[:, col].max()
 	    logData_normalized[col]  = (logData_normalized.loc[:, col] - col_min)/(col_max - col_min)
 	return logData_normalized
-
-
-def preprocessData(data, feature_columns, target_columns):	
-	train_size = int(data.shape[0]*0.7)	
-	X_train = logData_normalized[feature_columns][:train_size]
-	Y_train = logData_normalized[target_columns][:train_size]
-
-	X_test = data[feature_columns][train_size:]
-	Y_test = data[target_columns][train_size:]
-	logYtrain_normalized = log_normalize(Y_train)
-	logYtest_normalized = log_normalize(Y_test)
-	return X_train, logYtrain_normalized, X_test, logYtest_normalized
-
-def preprocessDataTreament(data, feature_columns, target_columns, treatment_columns):	
-	train_size = int(data.shape[0]*0.7)
-
-	l = [0, 1, 2]
-	treatment_combinations = list(itertools.product(l, repeat=3))
-	X_trains, Y_trains, X_tests, Y_tests, tr_combs = [], [], [], [], []
-	for t_comb in treatment_combinations:
-		data_tr = data[(data.loc[:, treatment_columns[0]] == t_comb[0]) & \
-			  (data.loc[:, treatment_columns[1]] == t_comb[1]) & \
-			  (data.loc[:, treatment_columns[2]] == t_comb[2])]
-		treatX_train = logData_normalized[feature_columns][:train_size]
-		treatY_train = logData_normalized[target_columns][:train_size]
-
-		treatX_test = data[feature_columns][train_size:]
-		treatY_test = data[target_columns][train_size:]
-
-		X_trains.append(treatX_train)
-		Y_trains.append(treatY_train)
-		X_tests.append(treatX_test)
-		Y_tests.append(treatY_test)
-		tr_combs.append(t_comb)
-
-	logYtrain_normalized = [log_normalize(x) for x in Y_trains]
-	logYtest_normalized = [log_normalize(x) for x in Y_tests]
-	return X_trains, logYtrain_normalized, X_tests, logYtest_normalized, tr_combs
 
 
 def mainTreatments():
