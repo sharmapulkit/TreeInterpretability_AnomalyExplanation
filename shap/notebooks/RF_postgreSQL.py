@@ -21,7 +21,7 @@ epsilon = 0.00001
 
 ############## DEFINE MACRO VARIABLES #############
 #### Dataset path ####
-PATH='~/cs696ds/TreeInterpretability_AnomalyExplanation/'
+PATH='/home/pulkit/Documents/PDF/umass/sem2/cs696ds/TreeInterpretability_AnomalyExplanation/'
 print("Loading dataset...")
 data = pd.read_csv(PATH+"datasets/postgres-results.csv")
 print(data.shape)
@@ -29,10 +29,10 @@ print(data.shape)
 all_feats = list(data)
 
 ####### Define Output, Covariate and Treatment columns names
-target_columns = ['local_written_blocks', 'temp_written_blocks', 'shared_hit_blocks', 'temp_read_blocks', 'local_read_blocks', 'runtime', 'shared_read_blocks']
+target_columns 	  = ['local_written_blocks', 'temp_written_blocks', 'shared_hit_blocks', 'temp_read_blocks', 'local_read_blocks', 'runtime', 'shared_read_blocks']
 treatment_columns = ['index_level', 'page_cost', 'memory_level']
 covariate_columns = ['rows', 'creation_year', 'num_ref_tables', 'num_joins', 'num_group_by', 'queries_by_user', 'length_chars', 'total_ref_rows', 'local_hit_blocks', 'favorite_count']
-feature_columns = covariate_columns.copy()
+feature_columns   = covariate_columns.copy()
 feature_columns.extend(treatment_columns)
 ######################################################
 
@@ -43,6 +43,8 @@ class DataLoader():
 		self._covariate_columns = covariate_columns
 		self._treatment_columns = treatment_columns
 		self._target_columns = target_columns
+		self._feature_columns = self._covariate_columns.copy()
+		self._feature_columns.extend(treatment_columns)
 		self._data = pd.read_csv(self._dataset_path)
 
 	####### Normalize columns ########
@@ -55,11 +57,13 @@ class DataLoader():
 
 	####### Log normalize all columns ###########
 	def logNormalizeTargets(self):
-		self._data = np.log(self._data + epsilon)
+		# self._data = np.log(self._data + epsilon)
 		for target in list(self._target_columns):
-		    col_min = self._data.loc[:, target].min()
-		    col_max = self._data.loc[:, target].max()
-		    self._data[target]  = (self._data.loc[:, target] - col_min) / (col_max - col_min)
+			self._data.loc[:, target] = np.log(self._data.loc[:, target] + epsilon)
+			# print(self._data.shape)
+			col_min = self._data.loc[:, target].min()
+			col_max = self._data.loc[:, target].max()
+			self._data[target]  = (self._data.loc[:, target] - col_min) / (col_max - col_min)
 		return
 
 	def preprocessData(self, train_frac=0.7, val_frac=0.0, test_frac=0.3):
@@ -79,10 +83,33 @@ class DataLoader():
 
 		return X_train, logYtrain_normalized, X_val, logYval_normalized, X_test, logYtest_normalized
 
+	def preprocessDataTreatmentCombo(self, treatmentCombo=(0,0,0), train_frac=0.7, val_frac=0.0, test_frac=0.3):
+		train_size = int(self._data.shape[0]*train_frac)
+		val_size = int(self._data.shape[0]*val_frac)
+		test_size = int(self._data.shape[0]*test_frac)
+
+		self.logNormalizeTargets()
+		t_comb = treatmentCombo
+		data_tr = data[(data.loc[:, treatment_columns[0]] == t_comb[0]) & \
+					  (data.loc[:, treatment_columns[1]] == t_comb[1]) & \
+					  (data.loc[:, treatment_columns[2]] == t_comb[2])]
+		treatX_train = self._data[self._feature_columns][:train_size]
+		treatY_train = self._data[self._target_columns][:train_size]
+
+		treatX_val = self._data[self._feature_columns][train_size:train_size + val_size]
+		treatY_val = self._data[self._target_columns][train_size:train_size + val_size]
+
+		treatX_test = self._data[self._feature_columns][train_size+val_size:]
+		treatY_test = self._data[self._target_columns][train_size+val_size:]
+
+		return treatX_train, treatY_train, treatX_val, treatY_val, treatX_test, treatY_test
+
+
+
 	def preprocessDataTreatment(self, train_frac=0.7, val_frac=0.0, test_frac=0.3):
-		train_size = int(data.shape[0]*train_frac)
-		val_size = int(data.shape[0]*val_frac)
-		test_size = int(data.shape[0]*test_frac)
+		train_size = int(self._data.shape[0]*train_frac)
+		val_size = int(self._data.shape[0]*val_frac)
+		test_size = int(self._data.shape[0]*test_frac)
 
 		l = [0, 1, 2]
 		treatment_combinations = list(itertools.product(l, repeat=3))
@@ -96,7 +123,7 @@ class DataLoader():
 			treatY_train = self._data[self._target_columns][:train_size]
 
 			treatX_val = self._data[self._feature_columns][train_size:train_size + val_size]
-			treatY_val = self._data[self._target_column][train_size:train_size + val_size]
+			treatY_val = self._data[self._target_columns][train_size:train_size + val_size]
 
 			treatX_test = self._data[self._feature_columns][train_size+val_size:]
 			treatY_test = self._data[self._target_columns][train_size+val_size:]
@@ -108,8 +135,6 @@ class DataLoader():
 			X_tests.append(treatX_test)
 			Y_tests.append(treatY_test)
 
-			tr_combs.append(t_comb)
-
 		return X_trains, Y_trains, X_vals, Y_vals, X_tests, Y_tests, treatment_combinations
 
 class TreeRegression():
@@ -118,6 +143,15 @@ class TreeRegression():
 		self.max_depth = max_depth
 		self.model = RandomForestRegressor(n_estimators, max_depth)
 		
+	######### Getter ##########
+	def get_model(self):
+		return self.model
+
+	######### Setter ##########
+	def set_nEst(self, n_est):
+		self.n_estimators = n_est
+	def set_maxDepth(self, max_D):
+		self.max_depth = max_D
 
 	######### Train Random Forest Regressor
 	def trainRF(self, X_train, Y_train, current_target, rf_n_estimators=200, rf_max_depth=20):
@@ -165,7 +199,7 @@ class TreeRegression():
 
 		print("Best found R2:", best_combo_r2_test)
 		print("Best found (N_estimators, max_depth):", best_combo)
-		return(best_combo, best_combo_r2_test)
+		return (best_combo, best_combo_r2_test)
 
 
 	########## Train XGBoost ##########
@@ -215,33 +249,39 @@ def log_normalize(self, data):
 
 
 def mainTreatments():
-	treereg = TreeRegression(PATH)		
-	start_time = time.time()
-	dataloader = DataLoader(PATH + "datasets/postgres-results.csv")
- 
-	X_trains, logY_train_normalizeds, X_vals, logY_vals, X_tests, logY_test_normalizeds, tr_combos = dataloader.preprocessDataTreatment()
-	data_preprocessed_time = time.time()
-	print("Time to preprocess:", data_preprocessed_time - start_time)
-
+	### Training parameters
+	SAVE_RF = True
+	outdir = PATH + "shap/notebooks/trainedNetworks/"
 	current_target = 'runtime'
 	rf_n_estimators = 100
 	rf_max_depth = 8
 
-	SAVE_RF = True
-	outdir = PATH + "shap/notebooks/trainedNetworks/"
-	for (Xtr, logYtr, Xval, logYval, Xte, logYte, tr_comb) in zip(X_trains, logY_train_normlizeds, X_val, logY_vals, X_tests, logY_test_normalizeds, trCombs):
-		model_filename = outdir + "RF_postgres_Nest{}_maxD{}_{}_tr{}{}{}".format(rf_n_estimators, rf_max_depth, 'runtime', tr_comb[0], tr_comb[1], tr_comb[2])
-		if (SAVE_RF):
-			print("Training Random Forest...")
-			rf = treereg.trainRF(Xtr, logYtr, current_target, rf_n_estimators, rf_max_depth)
-			rf_trained_time = time.time()
-			pk.dump(rf, open(model_filename, 'wb'))
-			model_file_dumped = time.time()
-			print("Time to Train RF:", rf_trained_time - data_preprocessed_time)
-		else:
-			rf = pk.load(open(model_filename, 'rb'))	
-			loaded_model = time.time()
-			print("Time to load model:", loaded_model - data_preprocessed_time)
+	treereg = TreeRegression(PATH)		
+	start_time = time.time()
+	dataloader = DataLoader(PATH + "datasets/postgres-results.csv", covariate_columns, treatment_columns, target_columns)
+ 
+	# X_trains, logY_train_normalizeds, X_vals, logY_vals, X_tests, logY_test_normalizeds, tr_combos = dataloader.preprocessDataTreatmentCombo((0,0,0), train_frac=0.1, val_frac=0.0, test_frac=0.1)
+	tr_comb = (0, 0, 0)
+	Xtr, logYtr, Xval, logYval, Xte, logYte = dataloader.preprocessDataTreatmentCombo(tr_comb, train_frac=0.1, val_frac=0.0, test_frac=0.1)
+	# print(X_trains[0].shape)
+	data_preprocessed_time = time.time()
+	print("Time to preprocess:", data_preprocessed_time - start_time)
+
+	# for (Xtr, logYtr, Xval, logYval, Xte, logYte, tr_comb) in zip(X_trains, logY_train_normalizeds, X_vals, logY_vals, X_tests, logY_test_normalizeds, tr_combos):
+	# Xtr, logYtr, Xval, logYval, Xte, logYte, tr_comb = X_trains[0], logY_train_normalizeds[0], X_vals[0], logY_vals[0], X_tests[0], logY_test_normalizeds[0], tr_combos[0]
+	model_filename = outdir + "RF_postgres_Nest{}_maxD{}_{}_tr{}{}{}".format(rf_n_estimators, rf_max_depth, current_target, tr_comb[0], tr_comb[1], tr_comb[2])
+	if (SAVE_RF):
+		print("Training Random Forest...")
+		treereg.trainRF(Xtr, logYtr, current_target, rf_n_estimators, rf_max_depth)
+		rf = treereg.get_model()
+		rf_trained_time = time.time()
+		print("Time to Train RF:", rf_trained_time - data_preprocessed_time)
+		pk.dump(rf, open(model_filename, 'wb'))
+		loaded_model_timestamp = time.time()
+	else:
+		rf = pk.load(open(model_filename, 'rb'))	
+		loaded_model_timestamp = time.time()
+		print("Time to load model:", loaded_model_timestamp - data_preprocessed_time)
 
 	#print("Train Evaluation....")
 	
@@ -252,17 +292,16 @@ def mainTreatments():
 	#treereg.evaluateRF(X_test, logY_test_normalized, rf, current_target)
 	#print(X_test.shape)
 	#print(logY_test_normalized.loc[:, current_target].shape)
-	treereg.evaluateRF(X_test, Y_test.loc[:, current_target], rf, current_target)
-	treereg.evaluateRF(X_test, logY_test_normalized.loc[:, current_target], rf, current_target)
-	print("Evaluation time:", time.time() - loaded_model)
+	treereg.evaluateRF(Xte, logYte.loc[:, current_target], current_target)
+	print("Evaluation time:", time.time() - loaded_model_timestamp)
 	
 	evaluated_time = time.time()
-	ti_preds, ti_biases, ti_contribs = ti.predict(rf, X_test[:500])
+	ti_preds, ti_biases, ti_contribs = ti.predict(rf, Xte[:500])
 	ti_values_time = time.time()
 	print("Time for Tree Interpretation:", ti_values_time - evaluated_time)
 	
 	explainer = shap.TreeExplainer(rf)
-	shap_values = explainer.shap_values(X_test[:500])
+	shap_values = explainer.shap_values(Xte[:500])
 	shap_values_time = time.time()
 	print("Time for SHAP explaination values:", shap_values_time - ti_values_time)
 	
