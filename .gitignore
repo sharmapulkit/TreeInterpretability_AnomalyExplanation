@@ -4,3 +4,4 @@ datasets/*.csv
 *.mdl.pk
 *.bk.py
 *.sw*
+trainedNetworks*
