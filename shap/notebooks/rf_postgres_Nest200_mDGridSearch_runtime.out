@@ -1,0 +1,51 @@
++ allCommand=
++ '[' 2 -gt 0 ']'
++ allCommand='  python '
++ shift
++ '[' 1 -gt 0 ']'
++ allCommand='   python  RF_postgreSQL.py '
++ shift
++ '[' 0 -gt 0 ']'
++ python RF_postgreSQL.py
+The sklearn.ensemble.forest module is  deprecated in version 0.22 and will be removed in version 0.24. The corresponding classes / functions should instead be imported from sklearn.ensemble. Anything that cannot be imported from sklearn.ensemble is now part of the private API.
+Loading dataset...
+(1506270, 22)
+Treatment Combination: (0, 0, 0)
+Time to preprocess: 4.411636829376221
+Max Depth: 10
+Train Set MSE: 0.05469704487748693
+Train Set R2: 0.6483846035407306
+Test Set MSE: 0.06374943217510437
+Test Set R2: 0.5288048250035469
+Max Depth: 20
+Train Set MSE: 0.012965912791650649
+Train Set R2: 0.9710775635294511
+Test Set MSE: 0.05554810171530986
+Test Set R2: 0.6140176016160555
+Max Depth: 40
+Train Set MSE: 0.010174662626124568
+Train Set R2: 0.9775172575277881
+Test Set MSE: 0.05554511377624088
+Test Set R2: 0.6144678050145806
+Max Depth: 80
+Train Set MSE: 0.010173249367525663
+Train Set R2: 0.9775191813515363
+Test Set MSE: 0.055592088117166705
+Test Set R2: 0.6160010412162888
+Max Depth: 160
+Train Set MSE: 0.010173335791021802
+Train Set R2: 0.9775181620499994
+Test Set MSE: 0.055532095885774575
+Test Set R2: 0.6144498566161725
+Best found R2: 0.6160010412162888
+Best found max_depth: 80
+Time to load model: 2623.9603514671326
+Train Evaluation....
+Traceback (most recent call last):
+  File "RF_postgreSQL.py", line 393, in <module>
+    mainTreatments()
+  File "RF_postgreSQL.py", line 319, in mainTreatments
+    trainMSE, trainR2 = treereg.evaluateRF(Xtr, logYtr.loc[:, current_target])
+  File "RF_postgreSQL.py", line 171, in evaluateRF
+    r2 = metrics.r2_score(Ytest, Ypred)
+NameError: name 'metric' is not defined

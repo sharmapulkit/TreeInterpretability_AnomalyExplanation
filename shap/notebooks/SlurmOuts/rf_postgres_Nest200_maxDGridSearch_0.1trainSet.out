@@ -1,0 +1,56 @@
++ allCommand=
++ '[' 2 -gt 0 ']'
++ allCommand='  python '
++ shift
++ '[' 1 -gt 0 ']'
++ allCommand='   python  RF_postgreSQL.py '
++ shift
++ '[' 0 -gt 0 ']'
++ python RF_postgreSQL.py
+The sklearn.ensemble.forest module is  deprecated in version 0.22 and will be removed in version 0.24. The corresponding classes / functions should instead be imported from sklearn.ensemble. Anything that cannot be imported from sklearn.ensemble is now part of the private API.
+Loading dataset...
+(1506270, 22)
+Treatment Combination: (0, 0, 0)
+Time to preprocess: 4.6258063316345215
+Max Depth: 10
+Train Set MSE: 0.034274839560077534
+Train Set R2: 0.8575674683918161
+Test Set MSE: 0.10462866175169706
+Test Set R2: 0.10106903392605882
+Max Depth: 20
+Train Set MSE: 0.007611416328774611
+Train Set R2: 0.9857293352971471
+Test Set MSE: 0.09295346704022728
+Test Set R2: 0.4084601962740886
+Max Depth: 40
+Train Set MSE: 0.00705881799937837
+Train Set R2: 0.9863229129733309
+Test Set MSE: 0.0929765673584263
+Test Set R2: 0.4105465507088557
+Max Depth: 80
+Train Set MSE: 0.007060764062812429
+Train Set R2: 0.986323198008136
+Test Set MSE: 0.09298666942552714
+Test Set R2: 0.4104436414582757
+Max Depth: 160
+Train Set MSE: 0.007060496650863855
+Train Set R2: 0.9863218703888771
+Test Set MSE: 0.0929861909227309
+Test Set R2: 0.4103435711590636
+Best found R2: 0.4105465507088557
+Best found max_depth: 40
+Training Random Forest...
+Time to Train RF: 385.39285135269165
+Train Evaluation....
+Traceback (most recent call last):
+  File "RF_postgreSQL.py", line 393, in <module>
+    mainTreatments()
+  File "RF_postgreSQL.py", line 319, in mainTreatments
+    trainMSE, trainR2 = treereg.evaluateRF(Xtr, logYtr[:, current_target])
+  File "/home/s20psharma/anaconda3/envs/pyenv/lib/python3.8/site-packages/pandas/core/frame.py", line 2800, in __getitem__
+    indexer = self.columns.get_loc(key)
+  File "/home/s20psharma/anaconda3/envs/pyenv/lib/python3.8/site-packages/pandas/core/indexes/base.py", line 2646, in get_loc
+    return self._engine.get_loc(key)
+  File "pandas/_libs/index.pyx", line 111, in pandas._libs.index.IndexEngine.get_loc
+  File "pandas/_libs/index.pyx", line 116, in pandas._libs.index.IndexEngine.get_loc
+TypeError: '(slice(None, None, None), 'runtime')' is an invalid key
