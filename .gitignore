@@ -6,3 +6,5 @@ datasets/*.csv
 *.sw*
 trainedNetworks*
 .nfs*
+*.png
+trainedModels*
