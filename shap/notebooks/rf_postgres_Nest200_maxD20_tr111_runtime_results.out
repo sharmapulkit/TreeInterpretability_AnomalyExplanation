@@ -1,0 +1,38 @@
++ allCommand=
++ '[' 2 -gt 0 ']'
++ allCommand='  python '
++ shift
++ '[' 1 -gt 0 ']'
++ allCommand='   python  RF_postgreSQL.py '
++ shift
++ '[' 0 -gt 0 ']'
++ python RF_postgreSQL.py
+The sklearn.ensemble.forest module is  deprecated in version 0.22 and will be removed in version 0.24. The corresponding classes / functions should instead be imported from sklearn.ensemble. Anything that cannot be imported from sklearn.ensemble is now part of the private API.
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+Loading dataset...
+(1506270, 22)
+Treatment Combination: (1, 1, 1)
+Train Size: (33453, 13)
+Val Size: (11151, 13)
+Test Size: (11151, 13)
+Time to preprocess: 2.8787119388580322
+Training Random Forest...
+Time to Train RF: 9.080828428268433
+Train Evaluation....
+Train R2 Score: 0.99017928307179
+Test Evaluation....
+Test R2 Score: 0.7208382908139284
+Evaluation time: 1.3548882007598877
+Time for Tree Interpretation: 18.517308235168457
+Time for SHAP explaination values: 90.87253856658936
+(500, 13)
+(500, 13)
+count    500.000000
+mean       0.728638
+std        0.173556
+min       -0.022599
+25%        0.637006
+50%        0.742558
+75%        0.853107
+max        1.000000
+dtype: float64

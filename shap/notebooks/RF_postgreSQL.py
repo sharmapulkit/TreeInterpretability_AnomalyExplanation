@@ -285,61 +285,61 @@ def mainTreatments():
 	rf_n_estimators = 200
 	rf_max_depth = 20
 
-	treereg = TreeRegression(PATH)		
 	start_time = time.time()
 	dataloader = DataLoader(PATH + "datasets/postgres-results.csv", covariate_columns, treatment_columns, target_columns)
  
 	# X_trains, logY_train_normalizeds, X_vals, logY_vals, X_tests, logY_test_normalizeds, tr_combos = dataloader.preprocessDataTreatmentCombo((0,0,0), train_frac=0.1, val_frac=0.0, test_frac=0.1)
 	l = [0, 1, 2]
-	for tr_comb in list(itertools.product(l, repeat=3)):
-	#tr_comb = (0, 0, 0)
-		print("Treatment Combination:", tr_comb)
-		Xtr, logYtr, Xval, logYval, Xte, logYte = dataloader.preprocessDataTreatmentCombo(tr_comb, train_frac=0.6, val_frac=0.2, test_frac=0.2)
-		print("Train Size:", Xtr.shape)
-		print("Val Size:", Xval.shape)
-		print("Test Size:", Xte.shape)
+	#for tr_comb in list(itertools.product(l, repeat=3)):
+	treereg = TreeRegression(PATH)		
+	tr_comb = (0, 2, 0)
+	print("Treatment Combination:", tr_comb)
+	Xtr, logYtr, Xval, logYval, Xte, logYte = dataloader.preprocessDataTreatmentCombo(tr_comb, train_frac=0.6, val_frac=0.2, test_frac=0.2)
+	print("Train Size:", Xtr.shape)
+	print("Val Size:", Xval.shape)
+	print("Test Size:", Xte.shape)
 
-		data_preprocessed_time = time.time()
-		print("Time to preprocess:", data_preprocessed_time - start_time)
-		#treereg.grid_search_rf_depth(Xtr, logYtr, Xval, logYval, current_target)
+	data_preprocessed_time = time.time()
+	print("Time to preprocess:", data_preprocessed_time - start_time)
+	#treereg.grid_search_rf_depth(Xtr, logYtr, Xval, logYval, current_target)
 
-		# for (Xtr, logYtr, Xval, logYval, Xte, logYte, tr_comb) in zip(X_trains, logY_train_normalizeds, X_vals, logY_vals, X_tests, logY_test_normalizeds, tr_combos):
-		# Xtr, logYtr, Xval, logYval, Xte, logYte, tr_comb = X_trains[0], logY_train_normalizeds[0], X_vals[0], logY_vals[0], X_tests[0], logY_test_normalizeds[0], tr_combos[0]
-		model_filename = outdir + "RF_postgres_Nest{}_maxD{}_{}_tr{}{}{}".format(rf_n_estimators, rf_max_depth, current_target, tr_comb[0], tr_comb[1], tr_comb[2])
-		if (SAVE_RF):
-			print("Training Random Forest...")
-			treereg.trainRF(Xtr, logYtr, current_target, rf_n_estimators, rf_max_depth)
-			rf = treereg.get_model()
-			rf_trained_time = time.time()
-			print("Time to Train RF:", rf_trained_time - data_preprocessed_time)
-			pk.dump(rf, open(model_filename, 'wb'))
-			loaded_model_timestamp = time.time()
-		else:
-			rf = pk.load(open(model_filename, 'rb'))	
-			loaded_model_timestamp = time.time()
-			print("Time to load model:", loaded_model_timestamp - data_preprocessed_time)
+	# for (Xtr, logYtr, Xval, logYval, Xte, logYte, tr_comb) in zip(X_trains, logY_train_normalizeds, X_vals, logY_vals, X_tests, logY_test_normalizeds, tr_combos):
+	# Xtr, logYtr, Xval, logYval, Xte, logYte, tr_comb = X_trains[0], logY_train_normalizeds[0], X_vals[0], logY_vals[0], X_tests[0], logY_test_normalizeds[0], tr_combos[0]
+	model_filename = outdir + "RF_postgres_Nest{}_maxD{}_{}_tr{}{}{}".format(rf_n_estimators, rf_max_depth, current_target, tr_comb[0], tr_comb[1], tr_comb[2])
+	if (SAVE_RF):
+		print("Training Random Forest...")
+		treereg.trainRF(Xtr, logYtr, current_target, rf_n_estimators, rf_max_depth)
+		rf = treereg.get_model()
+		rf_trained_time = time.time()
+		print("Time to Train RF:", rf_trained_time - data_preprocessed_time)
+		pk.dump(rf, open(model_filename, 'wb'))
+		loaded_model_timestamp = time.time()
+	else:
+		rf = pk.load(open(model_filename, 'rb'))	
+		loaded_model_timestamp = time.time()
+		print("Time to load model:", loaded_model_timestamp - data_preprocessed_time)
 
-		print("Train Evaluation....")
-		trainMSE, trainR2 = treereg.evaluateRF(Xtr, logYtr.loc[:, current_target])
-		print("Train R2 Score:", trainR2)
-		print("Test Evaluation....")
-		testMSE, testR2 = treereg.evaluateRF(Xte, logYte.loc[:, current_target])
-		print("Test R2 Score:", testR2)
-		print("Evaluation time:", time.time() - loaded_model_timestamp)
-		
-		evaluated_time = time.time()
-		ti_preds, ti_biases, ti_contribs = ti.predict(rf, Xte[:500])
-		ti_values_time = time.time()
-		print("Time for Tree Interpretation:", ti_values_time - evaluated_time)
-		
-		explainer = shap.TreeExplainer(rf)
-		shap_values = explainer.shap_values(Xte[:500])
-		shap_values_time = time.time()
-		print("Time for SHAP explaination values:", shap_values_time - ti_values_time)
-		
-		print(ti_contribs.shape)
-		print(shap_values.shape)
-		print_spearmanr(ti_contribs, shap_values)
+	print("Train Evaluation....")
+	trainMSE, trainR2 = treereg.evaluateRF(Xtr, logYtr.loc[:, current_target])
+	print("Train R2 Score:", trainR2)
+	print("Test Evaluation....")
+	testMSE, testR2 = treereg.evaluateRF(Xte, logYte.loc[:, current_target])
+	print("Test R2 Score:", testR2)
+	print("Evaluation time:", time.time() - loaded_model_timestamp)
+	
+	evaluated_time = time.time()
+	ti_preds, ti_biases, ti_contribs = ti.predict(rf, Xte[:500])
+	ti_values_time = time.time()
+	print("Time for Tree Interpretation:", ti_values_time - evaluated_time)
+	
+	explainer = shap.TreeExplainer(rf)
+	shap_values = explainer.shap_values(Xte[:500])
+	shap_values_time = time.time()
+	print("Time for SHAP explaination values:", shap_values_time - ti_values_time)
+	
+	print(ti_contribs.shape)
+	print(shap_values.shape)
+	print_spearmanr(ti_contribs, shap_values)
 
 def main():
 	treereg = TreeRegression(PATH)		
