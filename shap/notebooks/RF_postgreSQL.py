@@ -287,10 +287,10 @@ def write_timing_info_file(outfile, values):
 			f.write('\t')
 			f.write(l)
 		f.write('\n')
-		f.write(values[0])
+		f.write(str(values[0]))
 		for val in values[1:]:
 			f.write('\t')
-			f.write(val)
+			f.write(str(val))
 		f.write('\n')
 	return
 
@@ -423,5 +423,7 @@ if __name__=="__main__":
 	parser.add_argument('--timing_info_outfile', help='Output file to store timing information')
 	parser.add_argument('--TrainValTest_split', help='Tuple with split ratios of dataset')
 	args = vars(parser.parse_args())
+	print(args['treatment_combination'])
+	print(make_tuple(args['treatment_combination']))
 	mainTreatments((args['save_model'].lower()=='true'), args['outdir'], args['dataset_dir'], args['current_target'], int(args['num_tree_estimators']), int(args['max_depth']), \
 						args['timing_info_outfile'], make_tuple(args['treatment_combination']), make_tuple(args['TrainValTest_split']) )
