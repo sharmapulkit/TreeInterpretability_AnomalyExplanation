@@ -1,0 +1,790 @@
++ allCommand=
++ '[' 2 -gt 0 ']'
++ allCommand='  python '
++ shift
++ '[' 1 -gt 0 ']'
++ allCommand='   python  RF_postgreSQL.py '
++ shift
++ '[' 0 -gt 0 ']'
++ python RF_postgreSQL.py
+The sklearn.ensemble.forest module is  deprecated in version 0.22 and will be removed in version 0.24. The corresponding classes / functions should instead be imported from sklearn.ensemble. Anything that cannot be imported from sklearn.ensemble is now part of the private API.
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+invalid value encountered in true_divide
+invalid value encountered in greater
+invalid value encountered in less
+invalid value encountered in less_equal
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+invalid value encountered in true_divide
+invalid value encountered in greater
+invalid value encountered in less
+invalid value encountered in less_equal
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+invalid value encountered in true_divide
+invalid value encountered in greater
+invalid value encountered in less
+invalid value encountered in less_equal
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+invalid value encountered in true_divide
+invalid value encountered in greater
+invalid value encountered in less
+invalid value encountered in less_equal
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+invalid value encountered in true_divide
+invalid value encountered in greater
+invalid value encountered in less
+invalid value encountered in less_equal
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+invalid value encountered in true_divide
+invalid value encountered in greater
+invalid value encountered in less
+invalid value encountered in less_equal
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+invalid value encountered in true_divide
+invalid value encountered in greater
+invalid value encountered in less
+invalid value encountered in less_equal
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+invalid value encountered in true_divide
+invalid value encountered in greater
+invalid value encountered in less
+invalid value encountered in less_equal
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+invalid value encountered in true_divide
+invalid value encountered in greater
+invalid value encountered in less
+invalid value encountered in less_equal
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+invalid value encountered in true_divide
+invalid value encountered in greater
+invalid value encountered in less
+invalid value encountered in less_equal
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+invalid value encountered in true_divide
+invalid value encountered in greater
+invalid value encountered in less
+invalid value encountered in less_equal
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+invalid value encountered in true_divide
+invalid value encountered in greater
+invalid value encountered in less
+invalid value encountered in less_equal
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+invalid value encountered in true_divide
+invalid value encountered in greater
+invalid value encountered in less
+invalid value encountered in less_equal
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+invalid value encountered in true_divide
+invalid value encountered in greater
+invalid value encountered in less
+invalid value encountered in less_equal
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+invalid value encountered in true_divide
+invalid value encountered in greater
+invalid value encountered in less
+invalid value encountered in less_equal
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+invalid value encountered in true_divide
+invalid value encountered in greater
+invalid value encountered in less
+invalid value encountered in less_equal
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+invalid value encountered in true_divide
+invalid value encountered in greater
+invalid value encountered in less
+invalid value encountered in less_equal
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+invalid value encountered in true_divide
+invalid value encountered in greater
+invalid value encountered in less
+invalid value encountered in less_equal
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+invalid value encountered in true_divide
+invalid value encountered in greater
+invalid value encountered in less
+invalid value encountered in less_equal
+Loading dataset...
+(1506270, 22)
+Treatment Combination: (0, 0, 0)
+Train Size: (33841, 13)
+Val Size: (11280, 13)
+Test Size: (11282, 13)
+Time to preprocess: 4.100484371185303
+Training Random Forest...
+Time to Train RF: 10.63430666923523
+Train Evaluation....
+Train R2 Score: 0.9409069239767882
+Test Evaluation....
+Test R2 Score: 0.7325042402093604
+Evaluation time: 1.6714081764221191
+Time for Tree Interpretation: 22.92925763130188
+Time for SHAP explaination values: 109.04483318328857
+(500, 13)
+(500, 13)
+count    500.000000
+mean       0.693090
+std        0.222373
+min        0.028249
+25%        0.550200
+50%        0.740113
+75%        0.860867
+max        1.000000
+dtype: float64
+Treatment Combination: (0, 0, 1)
+Train Size: (33517, 13)
+Val Size: (11172, 13)
+Test Size: (11173, 13)
+Time to preprocess: 149.76046442985535
+Training Random Forest...
+Time to Train RF: 10.404893636703491
+Train Evaluation....
+Train R2 Score: 0.9766789693590215
+Test Evaluation....
+Test R2 Score: 0.7788343106987967
+Evaluation time: 1.5656089782714844
+Time for Tree Interpretation: 17.825059175491333
+Time for SHAP explaination values: 83.61271119117737
+(500, 13)
+(500, 13)
+count    500.000000
+mean       0.652478
+std        0.224647
+min       -0.259887
+25%        0.531073
+50%        0.668611
+75%        0.819209
+max        0.994350
+dtype: float64
+Treatment Combination: (0, 0, 2)
+Train Size: (33493, 13)
+Val Size: (11164, 13)
+Test Size: (11165, 13)
+Time to preprocess: 264.4045820236206
+Training Random Forest...
+Time to Train RF: 8.163678169250488
+Train Evaluation....
+Train R2 Score: 0.9752475907760306
+Test Evaluation....
+Test R2 Score: 0.7808168392520421
+Evaluation time: 0.9074273109436035
+Time for Tree Interpretation: 5.210661172866821
+Time for SHAP explaination values: 24.118674516677856
+(500, 13)
+(500, 13)
+count    500.000000
+mean       0.660597
+std        0.217968
+min       -0.372531
+25%        0.523991
+50%        0.700744
+75%        0.823415
+max        0.994350
+dtype: float64
+Treatment Combination: (0, 1, 0)
+Train Size: (33534, 13)
+Val Size: (11178, 13)
+Test Size: (11179, 13)
+Time to preprocess: 303.7363531589508
+Training Random Forest...
+Time to Train RF: 1.5347223281860352
+Train Evaluation....
+Train R2 Score: 0.6989217359076085
+Test Evaluation....
+Test R2 Score: 0.6296449622193444
+Evaluation time: 0.1072847843170166
+Time for Tree Interpretation: 0.2466120719909668
+Time for SHAP explaination values: 0.277665376663208
+(500, 13)
+(500, 13)
+count    500.000000
+mean       0.509196
+std        0.082772
+min        0.043980
+25%        0.486911
+50%        0.486911
+75%        0.486911
+max        1.000000
+dtype: float64
+Treatment Combination: (0, 1, 1)
+Train Size: (33514, 13)
+Val Size: (11171, 13)
+Test Size: (11172, 13)
+Time to preprocess: 306.6650366783142
+Training Random Forest...
+Time to Train RF: 0.4229724407196045
+Train Evaluation....
+Train R2 Score: -2.5278611026635645e-07
+Test Evaluation....
+Test R2 Score: -0.0007350606181473207
+Evaluation time: 0.05917954444885254
+Time for Tree Interpretation: 0.17933416366577148
+Time for SHAP explaination values: 0.014040708541870117
+(500, 13)
+(500, 13)
+count    0.0
+mean     NaN
+std      NaN
+min      NaN
+25%      NaN
+50%      NaN
+75%      NaN
+max      NaN
+dtype: float64
+Treatment Combination: (0, 1, 2)
+Train Size: (33492, 13)
+Val Size: (11164, 13)
+Test Size: (11164, 13)
+Time to preprocess: 308.0495331287384
+Training Random Forest...
+Time to Train RF: 0.42321038246154785
+Train Evaluation....
+Train R2 Score: -1.34444921862098e-08
+Test Evaluation....
+Test R2 Score: -0.0005399341592966511
+Evaluation time: 0.058585405349731445
+Time for Tree Interpretation: 0.17515015602111816
+Time for SHAP explaination values: 0.013628721237182617
+(500, 13)
+(500, 13)
+count    0.0
+mean     NaN
+std      NaN
+min      NaN
+25%      NaN
+50%      NaN
+75%      NaN
+max      NaN
+dtype: float64
+Treatment Combination: (0, 2, 0)
+Train Size: (33532, 13)
+Val Size: (11177, 13)
+Test Size: (11178, 13)
+Time to preprocess: 309.42400574684143
+Training Random Forest...
+Time to Train RF: 0.42053747177124023
+Train Evaluation....
+Train R2 Score: -2.661263416303683e-07
+Test Evaluation....
+Test R2 Score: -0.0006295404306126962
+Evaluation time: 0.0588836669921875
+Time for Tree Interpretation: 0.17522978782653809
+Time for SHAP explaination values: 0.013796091079711914
+(500, 13)
+(500, 13)
+count    0.0
+mean     NaN
+std      NaN
+min      NaN
+25%      NaN
+50%      NaN
+75%      NaN
+max      NaN
+dtype: float64
+Treatment Combination: (0, 2, 1)
+Train Size: (33513, 13)
+Val Size: (11171, 13)
+Test Size: (11171, 13)
+Time to preprocess: 310.8028495311737
+Training Random Forest...
+Time to Train RF: 1.02412748336792
+Train Evaluation....
+Train R2 Score: 0.19553498809934589
+Test Evaluation....
+Test R2 Score: -56573018205.790596
+Evaluation time: 0.06769919395446777
+Time for Tree Interpretation: 0.17853188514709473
+Time for SHAP explaination values: 0.02051544189453125
+(500, 13)
+(500, 13)
+count    500.0
+mean       1.0
+std        0.0
+min        1.0
+25%        1.0
+50%        1.0
+75%        1.0
+max        1.0
+dtype: float64
+Treatment Combination: (0, 2, 2)
+Train Size: (33492, 13)
+Val Size: (11164, 13)
+Test Size: (11164, 13)
+Time to preprocess: 312.7854714393616
+Training Random Forest...
+Time to Train RF: 0.4275398254394531
+Train Evaluation....
+Train R2 Score: -1.5242218598388035e-09
+Test Evaluation....
+Test R2 Score: -0.00054302241323545
+Evaluation time: 0.058927059173583984
+Time for Tree Interpretation: 0.17448163032531738
+Time for SHAP explaination values: 0.013684511184692383
+(500, 13)
+(500, 13)
+count    0.0
+mean     NaN
+std      NaN
+min      NaN
+25%      NaN
+50%      NaN
+75%      NaN
+max      NaN
+dtype: float64
+Treatment Combination: (1, 0, 0)
+Train Size: (33456, 13)
+Val Size: (11152, 13)
+Test Size: (11152, 13)
+Time to preprocess: 314.1501188278198
+Training Random Forest...
+Time to Train RF: 0.42176127433776855
+Train Evaluation....
+Train R2 Score: -8.320888422730377e-10
+Test Evaluation....
+Test R2 Score: -0.0015084792457507046
+Evaluation time: 0.0595555305480957
+Time for Tree Interpretation: 0.17468857765197754
+Time for SHAP explaination values: 0.013658523559570312
+(500, 13)
+(500, 13)
+count    0.0
+mean     NaN
+std      NaN
+min      NaN
+25%      NaN
+50%      NaN
+75%      NaN
+max      NaN
+dtype: float64
+Treatment Combination: (1, 0, 1)
+Train Size: (33453, 13)
+Val Size: (11151, 13)
+Test Size: (11151, 13)
+Time to preprocess: 315.51104831695557
+Training Random Forest...
+Time to Train RF: 0.42928409576416016
+Train Evaluation....
+Train R2 Score: 0.0
+Test Evaluation....
+Test R2 Score: -0.0007649637996343106
+Evaluation time: 0.06029200553894043
+Time for Tree Interpretation: 0.1742708683013916
+Time for SHAP explaination values: 0.013780355453491211
+(500, 13)
+(500, 13)
+count    0.0
+mean     NaN
+std      NaN
+min      NaN
+25%      NaN
+50%      NaN
+75%      NaN
+max      NaN
+dtype: float64
+Treatment Combination: (1, 0, 2)
+Train Size: (33450, 13)
+Val Size: (11150, 13)
+Test Size: (11151, 13)
+Time to preprocess: 316.926429271698
+Training Random Forest...
+Time to Train RF: 0.4216034412384033
+Train Evaluation....
+Train R2 Score: -0.01700916919728601
+Test Evaluation....
+Test R2 Score: -0.030058350143587598
+Evaluation time: 0.058389902114868164
+Time for Tree Interpretation: 0.17562055587768555
+Time for SHAP explaination values: 0.014014720916748047
+(500, 13)
+(500, 13)
+count    0.0
+mean     NaN
+std      NaN
+min      NaN
+25%      NaN
+50%      NaN
+75%      NaN
+max      NaN
+dtype: float64
+Treatment Combination: (1, 1, 0)
+Train Size: (33456, 13)
+Val Size: (11152, 13)
+Test Size: (11152, 13)
+Time to preprocess: 318.29785799980164
+Training Random Forest...
+Time to Train RF: 1.0621938705444336
+Train Evaluation....
+Train R2 Score: 0.19994883898772797
+Test Evaluation....
+Test R2 Score: -1.6132018809378966e+21
+Evaluation time: 0.0699918270111084
+Time for Tree Interpretation: 0.18009376525878906
+Time for SHAP explaination values: 0.02104020118713379
+(500, 13)
+(500, 13)
+count    500.0
+mean       1.0
+std        0.0
+min        1.0
+25%        1.0
+50%        1.0
+75%        1.0
+max        1.0
+dtype: float64
+Treatment Combination: (1, 1, 1)
+Train Size: (33453, 13)
+Val Size: (11151, 13)
+Test Size: (11151, 13)
+Time to preprocess: 320.32981538772583
+Training Random Forest...
+Time to Train RF: 0.4205033779144287
+Train Evaluation....
+Train R2 Score: -1.6793850514229796
+Test Evaluation....
+Test R2 Score: -1.5345521487133906
+Evaluation time: 0.05887722969055176
+Time for Tree Interpretation: 0.17567062377929688
+Time for SHAP explaination values: 0.013740062713623047
+(500, 13)
+(500, 13)
+count    0.0
+mean     NaN
+std      NaN
+min      NaN
+25%      NaN
+50%      NaN
+75%      NaN
+max      NaN
+dtype: float64
+Treatment Combination: (1, 1, 2)
+Train Size: (33450, 13)
+Val Size: (11150, 13)
+Test Size: (11150, 13)
+Time to preprocess: 321.7006628513336
+Training Random Forest...
+Time to Train RF: 0.4217360019683838
+Train Evaluation....
+Train R2 Score: -1.119185585933121
+Test Evaluation....
+Test R2 Score: -0.6630143008339016
+Evaluation time: 0.060010671615600586
+Time for Tree Interpretation: 0.17583632469177246
+Time for SHAP explaination values: 0.014113187789916992
+(500, 13)
+(500, 13)
+count    0.0
+mean     NaN
+std      NaN
+min      NaN
+25%      NaN
+50%      NaN
+75%      NaN
+max      NaN
+dtype: float64
+Treatment Combination: (1, 2, 0)
+Train Size: (33456, 13)
+Val Size: (11152, 13)
+Test Size: (11152, 13)
+Time to preprocess: 323.07776975631714
+Training Random Forest...
+Time to Train RF: 1.0130109786987305
+Train Evaluation....
+Train R2 Score: 0.1999641985391052
+Test Evaluation....
+Test R2 Score: -1.2021589868561451e+27
+Evaluation time: 0.06756091117858887
+Time for Tree Interpretation: 0.18091607093811035
+Time for SHAP explaination values: 0.020734548568725586
+(500, 13)
+(500, 13)
+count    500.0
+mean       1.0
+std        0.0
+min        1.0
+25%        1.0
+50%        1.0
+75%        1.0
+max        1.0
+dtype: float64
+Treatment Combination: (1, 2, 1)
+Train Size: (33453, 13)
+Val Size: (11151, 13)
+Test Size: (11151, 13)
+Time to preprocess: 325.05667090415955
+Training Random Forest...
+Time to Train RF: 0.42156434059143066
+Train Evaluation....
+Train R2 Score: 0.0
+Test Evaluation....
+Test R2 Score: 0.0
+Evaluation time: 0.05889582633972168
+Time for Tree Interpretation: 0.1739940643310547
+Time for SHAP explaination values: 0.013476848602294922
+(500, 13)
+(500, 13)
+count    0.0
+mean     NaN
+std      NaN
+min      NaN
+25%      NaN
+50%      NaN
+75%      NaN
+max      NaN
+dtype: float64
+Treatment Combination: (1, 2, 2)
+Train Size: (33450, 13)
+Val Size: (11150, 13)
+Test Size: (11150, 13)
+Time to preprocess: 326.4466676712036
+Training Random Forest...
+Time to Train RF: 0.42659759521484375
+Train Evaluation....
+Train R2 Score: 1.0
+Test Evaluation....
+Test R2 Score: 1.0
+Evaluation time: 0.0589909553527832
+Time for Tree Interpretation: 0.17516160011291504
+Time for SHAP explaination values: 0.013436555862426758
+(500, 13)
+(500, 13)
+count    0.0
+mean     NaN
+std      NaN
+min      NaN
+25%      NaN
+50%      NaN
+75%      NaN
+max      NaN
+dtype: float64
+Treatment Combination: (2, 0, 0)
+Train Size: (33439, 13)
+Val Size: (11146, 13)
+Test Size: (11148, 13)
+Time to preprocess: 327.8345527648926
+Training Random Forest...
+Time to Train RF: 0.4201376438140869
+Train Evaluation....
+Train R2 Score: 1.0
+Test Evaluation....
+Test R2 Score: 1.0
+Evaluation time: 0.05826401710510254
+Time for Tree Interpretation: 0.1752030849456787
+Time for SHAP explaination values: 0.013872623443603516
+(500, 13)
+(500, 13)
+count    0.0
+mean     NaN
+std      NaN
+min      NaN
+25%      NaN
+50%      NaN
+75%      NaN
+max      NaN
+dtype: float64
+Treatment Combination: (2, 0, 1)
+Train Size: (33411, 13)
+Val Size: (11137, 13)
+Test Size: (11137, 13)
+Time to preprocess: 329.20680928230286
+Training Random Forest...
+Time to Train RF: 0.42154955863952637
+Train Evaluation....
+Train R2 Score: 1.0
+Test Evaluation....
+Test R2 Score: 1.0
+Evaluation time: 0.05878448486328125
+Time for Tree Interpretation: 0.17819666862487793
+Time for SHAP explaination values: 0.014200448989868164
+(500, 13)
+(500, 13)
+count    0.0
+mean     NaN
+std      NaN
+min      NaN
+25%      NaN
+50%      NaN
+75%      NaN
+max      NaN
+dtype: float64
+Treatment Combination: (2, 0, 2)
+Train Size: (33411, 13)
+Val Size: (11137, 13)
+Test Size: (11137, 13)
+Time to preprocess: 330.5890817642212
+Training Random Forest...
+Time to Train RF: 0.4203298091888428
+Train Evaluation....
+Train R2 Score: 1.0
+Test Evaluation....
+Test R2 Score: 1.0
+Evaluation time: 0.05856609344482422
+Time for Tree Interpretation: 0.17599940299987793
+Time for SHAP explaination values: 0.014058351516723633
+(500, 13)
+(500, 13)
+count    0.0
+mean     NaN
+std      NaN
+min      NaN
+25%      NaN
+50%      NaN
+75%      NaN
+max      NaN
+dtype: float64
+Treatment Combination: (2, 1, 0)
+Train Size: (33432, 13)
+Val Size: (11144, 13)
+Test Size: (11144, 13)
+Time to preprocess: 331.95257902145386
+Training Random Forest...
+Time to Train RF: 0.41953134536743164
+Train Evaluation....
+Train R2 Score: 1.0
+Test Evaluation....
+Test R2 Score: 1.0
+Evaluation time: 0.05870389938354492
+Time for Tree Interpretation: 0.1770005226135254
+Time for SHAP explaination values: 0.013894081115722656
+(500, 13)
+(500, 13)
+count    0.0
+mean     NaN
+std      NaN
+min      NaN
+25%      NaN
+50%      NaN
+75%      NaN
+max      NaN
+dtype: float64
+Treatment Combination: (2, 1, 1)
+Train Size: (33411, 13)
+Val Size: (11137, 13)
+Test Size: (11137, 13)
+Time to preprocess: 333.33651638031006
+Training Random Forest...
+Time to Train RF: 0.9862387180328369
+Train Evaluation....
+Train R2 Score: 0.19909926760321284
+Test Evaluation....
+Test R2 Score: 0.0
+Evaluation time: 0.06632685661315918
+Time for Tree Interpretation: 0.1783580780029297
+Time for SHAP explaination values: 0.019976377487182617
+(500, 13)
+(500, 13)
+count    500.0
+mean       1.0
+std        0.0
+min        1.0
+25%        1.0
+50%        1.0
+75%        1.0
+max        1.0
+dtype: float64
+Treatment Combination: (2, 1, 2)
+Train Size: (33411, 13)
+Val Size: (11137, 13)
+Test Size: (11137, 13)
+Time to preprocess: 335.27075695991516
+Training Random Forest...
+Time to Train RF: 0.42726969718933105
+Train Evaluation....
+Train R2 Score: 1.0
+Test Evaluation....
+Test R2 Score: 1.0
+Evaluation time: 0.059233903884887695
+Time for Tree Interpretation: 0.1758887767791748
+Time for SHAP explaination values: 0.01355600357055664
+(500, 13)
+(500, 13)
+count    0.0
+mean     NaN
+std      NaN
+min      NaN
+25%      NaN
+50%      NaN
+75%      NaN
+max      NaN
+dtype: float64
+Treatment Combination: (2, 2, 0)
+Train Size: (33416, 13)
+Val Size: (11138, 13)
+Test Size: (11140, 13)
+Time to preprocess: 336.6537537574768
+Training Random Forest...
+Time to Train RF: 0.4260838031768799
+Train Evaluation....
+Train R2 Score: 1.0
+Test Evaluation....
+Test R2 Score: 1.0
+Evaluation time: 0.05883026123046875
+Time for Tree Interpretation: 0.17516040802001953
+Time for SHAP explaination values: 0.013596057891845703
+(500, 13)
+(500, 13)
+count    0.0
+mean     NaN
+std      NaN
+min      NaN
+25%      NaN
+50%      NaN
+75%      NaN
+max      NaN
+dtype: float64
+Treatment Combination: (2, 2, 1)
+Train Size: (33411, 13)
+Val Size: (11137, 13)
+Test Size: (11137, 13)
+Time to preprocess: 338.0229811668396
+Training Random Forest...
+Time to Train RF: 0.426501989364624
+Train Evaluation....
+Train R2 Score: 1.0
+Test Evaluation....
+Test R2 Score: 1.0
+Evaluation time: 0.05935549736022949
+Time for Tree Interpretation: 0.1747589111328125
+Time for SHAP explaination values: 0.013528108596801758
+(500, 13)
+(500, 13)
+count    0.0
+mean     NaN
+std      NaN
+min      NaN
+25%      NaN
+50%      NaN
+75%      NaN
+max      NaN
+dtype: float64
+Treatment Combination: (2, 2, 2)
+Train Size: (33411, 13)
+Val Size: (11137, 13)
+Test Size: (11137, 13)
+Time to preprocess: 339.3939759731293
+Training Random Forest...
+Time to Train RF: 0.4214620590209961
+Train Evaluation....
+Train R2 Score: 1.0
+Test Evaluation....
+Test R2 Score: 1.0
+Evaluation time: 0.05898642539978027
+Time for Tree Interpretation: 0.174391508102417
+Time for SHAP explaination values: 0.013655424118041992
+(500, 13)
+(500, 13)
+count    0.0
+mean     NaN
+std      NaN
+min      NaN
+25%      NaN
+50%      NaN
+75%      NaN
+max      NaN
+dtype: float64

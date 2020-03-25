@@ -14,6 +14,9 @@ from sklearn import metrics
 import pickle as pk
 import itertools
 import time
+import argparse
+from ast import literal_eval as make_tuple
+
 
 # print the JS visualization code to the notebook
 
@@ -21,12 +24,12 @@ epsilon = 0.00001
 
 ############## DEFINE MACRO VARIABLES #############
 #### Dataset path ####
-PATH='/home/s20psharma/cs696ds/TreeInterpretability_AnomalyExplanation/'
-print("Loading dataset...")
-data = pd.read_csv(PATH+"datasets/postgres-results.csv")
-print(data.shape)
+#PATH='/home/s20psharma/cs696ds/TreeInterpretability_AnomalyExplanation/'
+#print("Loading dataset...")
+#data = pd.read_csv(PATH+"datasets/postgres-results.csv")
+#print(data.shape)
 
-all_feats = list(data)
+#all_feats = list(data)
 
 ####### Define Output, Covariate and Treatment columns names
 target_columns 	  = ['local_written_blocks', 'temp_written_blocks', 'shared_hit_blocks', 'temp_read_blocks', 'local_read_blocks', 'runtime', 'shared_read_blocks']
@@ -276,73 +279,87 @@ def log_normalize(self, data):
 	    logData_normalized[col]  = (logData_normalized.loc[:, col] - col_min)/(col_max - col_min)
 	return logData_normalized
 
+def write_timing_info_file(outfile, values):
+	labels = ["dataPreprocessing", "modelTraining", "modelTrainEvaluation", "modelTestEvaluation", "TItime", 'SHAPtime']
+	with open(outfile, 'w') as f:
+		f.write(labels[0])
+		for l in labels[1:]:
+			f.write('\t')
+			f.write(l)
+		f.write('\n')
+		f.write(str(values[0]))
+		for val in values[1:]:
+			f.write('\t')
+			f.write(str(val))
+		f.write('\n')
+	return
 
-def mainTreatments():
-	### Training parameters
-	SAVE_RF = True
-	outdir = PATH + "shap/notebooks/trainedNetworks/"
-	current_target = 'runtime'
-	rf_n_estimators = 200
-	rf_max_depth = 20
-
-	treereg = TreeRegression(PATH)		
+def mainTreatments(SAVE_RF, outdir, datasetPath, current_target, rf_n_estimators, rf_max_depth, timing_info_outfile, tr_comb=None, TrainValTest_split=(0.6,0.2,0.2)):
 	start_time = time.time()
-	dataloader = DataLoader(PATH + "datasets/postgres-results.csv", covariate_columns, treatment_columns, target_columns)
- 
-	# X_trains, logY_train_normalizeds, X_vals, logY_vals, X_tests, logY_test_normalizeds, tr_combos = dataloader.preprocessDataTreatmentCombo((0,0,0), train_frac=0.1, val_frac=0.0, test_frac=0.1)
-	l = [0, 1, 2]
-	for tr_comb in list(itertools.product(l, repeat=3)):
-	#tr_comb = (0, 0, 0)
-		print("Treatment Combination:", tr_comb)
-		Xtr, logYtr, Xval, logYval, Xte, logYte = dataloader.preprocessDataTreatmentCombo(tr_comb, train_frac=0.6, val_frac=0.2, test_frac=0.2)
-		print("Train Size:", Xtr.shape)
-		print("Val Size:", Xval.shape)
-		print("Test Size:", Xte.shape)
+	timing_info = []
+	
+	dataloader = DataLoader(datasetPath + "datasets/postgres-results.csv", covariate_columns, treatment_columns, target_columns)
+	if (tr_comb is None):
+		Xtr, logYtr, Xval, logYval, Xte, logYte = dataloader.preprocessData(train_frac=TrainValTest_split[0], val_frac=TrainValTest_split[1], test_frac=TrainValTest_split[2])
+	else:
+		Xtr, logYtr, Xval, logYval, Xte, logYte = dataloader.preprocessDataTreatmentCombo(tr_comb, train_frac=TrainValTest_split[0], val_frac=TrainValTest_split[1], test_frac=TrainValTest_split[2])
+	data_preprocessed_time = time.time()
+	print("Time to preprocess:", data_preprocessed_time - start_time)
 
-		data_preprocessed_time = time.time()
-		print("Time to preprocess:", data_preprocessed_time - start_time)
-		#treereg.grid_search_rf_depth(Xtr, logYtr, Xval, logYval, current_target)
+	print("Treatment Combination:", tr_comb)
+	print("Train Size:", Xtr.shape)
+	print("Val Size:",	 Xval.shape)
+	print("Test Size:",  Xte.shape)
+	treereg = TreeRegression(rf_n_estimators, rf_max_depth)
 
-		# for (Xtr, logYtr, Xval, logYval, Xte, logYte, tr_comb) in zip(X_trains, logY_train_normalizeds, X_vals, logY_vals, X_tests, logY_test_normalizeds, tr_combos):
-		# Xtr, logYtr, Xval, logYval, Xte, logYte, tr_comb = X_trains[0], logY_train_normalizeds[0], X_vals[0], logY_vals[0], X_tests[0], logY_test_normalizeds[0], tr_combos[0]
-		model_filename = outdir + "RF_postgres_Nest{}_maxD{}_{}_tr{}{}{}".format(rf_n_estimators, rf_max_depth, current_target, tr_comb[0], tr_comb[1], tr_comb[2])
-		if (SAVE_RF):
-			print("Training Random Forest...")
-			treereg.trainRF(Xtr, logYtr, current_target, rf_n_estimators, rf_max_depth)
-			rf = treereg.get_model()
-			rf_trained_time = time.time()
-			print("Time to Train RF:", rf_trained_time - data_preprocessed_time)
-			pk.dump(rf, open(model_filename, 'wb'))
-			loaded_model_timestamp = time.time()
-		else:
-			rf = pk.load(open(model_filename, 'rb'))	
-			loaded_model_timestamp = time.time()
-			print("Time to load model:", loaded_model_timestamp - data_preprocessed_time)
+	model_filename = outdir + "RF_postgres_Nest{}_maxD{}_{}_tr{}{}{}".format(rf_n_estimators, rf_max_depth, current_target, tr_comb[0], tr_comb[1], tr_comb[2])
+	if (SAVE_RF):
+		print("Training Random Forest...")
+		treereg.trainRF(Xtr, logYtr, current_target, rf_n_estimators, rf_max_depth)
+		rf = treereg.get_model()
+		rf_trained_time = time.time()
+		print("Time to Train RF:", rf_trained_time - data_preprocessed_time)
 
-		print("Train Evaluation....")
-		trainMSE, trainR2 = treereg.evaluateRF(Xtr, logYtr.loc[:, current_target])
-		print("Train R2 Score:", trainR2)
-		print("Test Evaluation....")
-		testMSE, testR2 = treereg.evaluateRF(Xte, logYte.loc[:, current_target])
-		print("Test R2 Score:", testR2)
-		print("Evaluation time:", time.time() - loaded_model_timestamp)
-		
-		evaluated_time = time.time()
-		ti_preds, ti_biases, ti_contribs = ti.predict(rf, Xte[:500])
-		ti_values_time = time.time()
-		print("Time for Tree Interpretation:", ti_values_time - evaluated_time)
-		
-		explainer = shap.TreeExplainer(rf)
-		shap_values = explainer.shap_values(Xte[:500])
-		shap_values_time = time.time()
-		print("Time for SHAP explaination values:", shap_values_time - ti_values_time)
-		
-		print(ti_contribs.shape)
-		print(shap_values.shape)
-		print_spearmanr(ti_contribs, shap_values)
+		pk.dump(rf, open(model_filename, 'wb'))
+		loaded_model_timestamp = time.time()
+	else:
+		rf = pk.load(open(model_filename, 'rb'))	
+		loaded_model_timestamp = time.time()
+		print("Time to load model:", loaded_model_timestamp - data_preprocessed_time)
+
+	print("Train Evaluation....")
+	trainMSE, trainR2 = treereg.evaluateRF(Xtr, logYtr.loc[:, current_target])
+	print("Train R2 Score:", trainR2)
+	print("Test Evaluation....")
+	testMSE, testR2 = treereg.evaluateRF(Xte, logYte.loc[:, current_target])
+	print("Test R2 Score:", testR2)
+	evaluationTimestamp = time.time()
+	print("Evaluation time:", evaluationTimestamp - loaded_model_timestamp)
+	
+	evaluated_time = time.time()
+	ti_preds, ti_biases, ti_contribs = ti.predict(rf, Xte[:500])
+	ti_values_time = time.time()
+	print("Time for Tree Interpretation:", ti_values_time - evaluated_time)
+
+	explainer = shap.TreeExplainer(rf)
+	shap_values = explainer.shap_values(Xte[:500])
+	shap_values_time = time.time()
+	print("Time for SHAP explaination values:", shap_values_time - ti_values_time)
+
+	print(ti_contribs.shape)
+	print(shap_values.shape)
+	print_spearmanr(ti_contribs, shap_values)
+
+	timing_info.append(data_preprocessed_time - start_time)
+	timing_info.append(rf_trained_time - data_preprocessed_time)
+	timing_info.append(loaded_model_timestamp - data_preprocessed_time)
+	timing_info.append(evaluationTimestamp - loaded_model_timestamp)
+	timing_info.append(ti_values_time - evaluated_time)
+	timing_info.append(shap_values_time - ti_values_time)
+	write_timing_info_file(timing_info_outfile, timing_info)
 
 def main():
-	treereg = TreeRegression(PATH)		
+	treereg = TreeRegression()		
 	start_time = time.time()
 	X_trains, logY_train_normalizeds, X_tests, logY_test_normalizeds = preprocessDataTreatment(data, feature_columns, target_columns, treatment_columns)
 	data_preprocessed_time = time.time()
@@ -394,4 +411,19 @@ def main():
 	print_spearmanr(ti_contribs, shap_values)
 
 if __name__=="__main__":
-	mainTreatments()
+	parser = argparse.ArgumentParser(description='Parser for training RF on dataset')
+	parser.add_argument('--save_model', help='Boolean flag to save a model or not')
+	parser.add_argument('--dataset_dir', help='Path to dataset csv file')
+	parser.add_argument('--current_target', help='string label for current target label')
+	parser.add_argument('--num_tree_estimators', help='Number of trees in Foreset based regression model')
+	parser.add_argument('--max_depth', help='Maximum Depth each individual tree can go to')
+	parser.add_argument('--outdir', help='Output directory to save the model to')
+	parser.add_argument('--treatmentTraining', help='Boolean Flag, if true: Train with a configure of treatment variables')
+	parser.add_argument('--treatment_combination', help='Configuration of treatment variables')
+	parser.add_argument('--timing_info_outfile', help='Output file to store timing information')
+	parser.add_argument('--TrainValTest_split', help='Tuple with split ratios of dataset')
+	args = vars(parser.parse_args())
+	print(args['treatment_combination'])
+	print(make_tuple(args['treatment_combination']))
+	mainTreatments((args['save_model'].lower()=='true'), args['outdir'], args['dataset_dir'], args['current_target'], int(args['num_tree_estimators']), int(args['max_depth']), \
+						args['timing_info_outfile'], make_tuple(args['treatment_combination']), make_tuple(args['TrainValTest_split']) )
