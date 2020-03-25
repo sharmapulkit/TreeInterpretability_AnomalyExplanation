@@ -8,3 +8,5 @@ trainedNetworks*
 .nfs*
 *.png
 trainedModels*
+*bk*
+*pycache*
