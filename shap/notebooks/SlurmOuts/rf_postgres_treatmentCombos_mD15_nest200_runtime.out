@@ -1,0 +1,633 @@
++ allCommand=
++ '[' 2 -gt 0 ']'
++ allCommand='  python '
++ shift
++ '[' 1 -gt 0 ']'
++ allCommand='   python  RF_postgreSQL.py '
++ shift
++ '[' 0 -gt 0 ']'
++ python RF_postgreSQL.py
+The sklearn.ensemble.forest module is  deprecated in version 0.22 and will be removed in version 0.24. The corresponding classes / functions should instead be imported from sklearn.ensemble. Anything that cannot be imported from sklearn.ensemble is now part of the private API.
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+Loading dataset...
+(1506270, 22)
+Treatment Combination: (0, 0, 0)
+Time to preprocess: 3.2819061279296875
+Training Random Forest...
+Time to Train RF: 301.2462434768677
+Train Evaluation....
+Train R2 Score: 0.9258745785656559
+Test Evaluation....
+Test R2 Score: 0.6511181285251553
+Evaluation time: 35.021607398986816
+Time for Tree Interpretation: 44.30035042762756
+Time for SHAP explaination values: 492.2382302284241
+(500, 13)
+(500, 13)
+count    500.000000
+mean       0.769068
+std        0.150927
+min       -0.112792
+25%        0.690510
+50%        0.800551
+75%        0.888966
+max        0.982119
+dtype: float64
+Treatment Combination: (0, 0, 1)
+Time to preprocess: 878.9475979804993
+Training Random Forest...
+Time to Train RF: 307.9171938896179
+Train Evaluation....
+Train R2 Score: 0.9276000313167296
+Test Evaluation....
+Test R2 Score: 0.6351805111923117
+Evaluation time: 34.83417844772339
+Time for Tree Interpretation: 42.12093949317932
+Time for SHAP explaination values: 365.87854170799255
+(500, 13)
+(500, 13)
+count    500.000000
+mean       0.660498
+std        0.211370
+min       -0.169559
+25%        0.546703
+50%        0.707590
+75%        0.824176
+max        0.988965
+dtype: float64
+Treatment Combination: (0, 0, 2)
+Time to preprocess: 1632.1210293769836
+Training Random Forest...
+Time to Train RF: 300.02026319503784
+Train Evaluation....
+Train R2 Score: 0.7892749195012614
+Test Evaluation....
+Test R2 Score: 0.49660664428548995
+Evaluation time: 29.196533918380737
+Time for Tree Interpretation: 19.704126596450806
+Time for SHAP explaination values: 169.90396165847778
+(500, 13)
+(500, 13)
+count    500.000000
+mean       0.682617
+std        0.198264
+min       -0.079128
+25%        0.530395
+50%        0.739394
+75%        0.831697
+max        0.975025
+dtype: float64
+Treatment Combination: (0, 1, 0)
+Time to preprocess: 2152.6295630931854
+Training Random Forest...
+Time to Train RF: 69.67498922348022
+Train Evaluation....
+Train R2 Score: 0.21453741615504163
+Test Evaluation....
+Test R2 Score: -16.184336892781726
+Evaluation time: 2.0662755966186523
+Time for Tree Interpretation: 0.38628458976745605
+Time for SHAP explaination values: 2.4918861389160156
+(500, 13)
+(500, 13)
+count    500.000000
+mean       0.485585
+std        0.062779
+min        0.465475
+25%        0.465475
+50%        0.465475
+75%        0.465475
+max        0.935635
+dtype: float64
+Treatment Combination: (0, 1, 1)
+Time to preprocess: 2228.2194254398346
+Training Random Forest...
+Time to Train RF: 33.480218172073364
+Train Evaluation....
+Train R2 Score: 0.19921165637728955
+Test Evaluation....
+Test R2 Score: -2253.364439526948
+Evaluation time: 1.0590918064117432
+Time for Tree Interpretation: 0.17449641227722168
+Time for SHAP explaination values: 0.09985589981079102
+(500, 13)
+(500, 13)
+count    5.000000e+02
+mean     5.653956e-01
+std      1.111335e-16
+min      5.653956e-01
+25%      5.653956e-01
+50%      5.653956e-01
+75%      5.653956e-01
+max      5.653956e-01
+dtype: float64
+Treatment Combination: (0, 1, 2)
+Time to preprocess: 2263.9647467136383
+Training Random Forest...
+Time to Train RF: 33.13276791572571
+Train Evaluation....
+Train R2 Score: 0.19875471412306445
+Test Evaluation....
+Test R2 Score: -315736.87916480197
+Evaluation time: 1.0626792907714844
+Time for Tree Interpretation: 0.17503952980041504
+Time for SHAP explaination values: 0.09828019142150879
+(500, 13)
+(500, 13)
+count    5.000000e+02
+mean     5.653956e-01
+std      1.111335e-16
+min      5.653956e-01
+25%      5.653956e-01
+50%      5.653956e-01
+75%      5.653956e-01
+max      5.653956e-01
+dtype: float64
+Treatment Combination: (0, 2, 0)
+Time to preprocess: 2299.36235499382
+Training Random Forest...
+Time to Train RF: 33.351163387298584
+Train Evaluation....
+Train R2 Score: 0.19857421585898438
+Test Evaluation....
+Test R2 Score: -39678141.97011315
+Evaluation time: 1.0444772243499756
+Time for Tree Interpretation: 0.17302799224853516
+Time for SHAP explaination values: 0.09980916976928711
+(500, 13)
+(500, 13)
+count    5.000000e+02
+mean     5.653956e-01
+std      1.111335e-16
+min      5.653956e-01
+25%      5.653956e-01
+50%      5.653956e-01
+75%      5.653956e-01
+max      5.653956e-01
+dtype: float64
+Treatment Combination: (0, 2, 1)
+Time to preprocess: 2334.9537422657013
+Training Random Forest...
+Time to Train RF: 32.670430421829224
+Train Evaluation....
+Train R2 Score: 0.19950591419904484
+Test Evaluation....
+Test R2 Score: -5863850932.03254
+Evaluation time: 1.047166347503662
+Time for Tree Interpretation: 0.17442989349365234
+Time for SHAP explaination values: 0.09665989875793457
+(500, 13)
+(500, 13)
+count    5.000000e+02
+mean     5.653956e-01
+std      1.111335e-16
+min      5.653956e-01
+25%      5.653956e-01
+50%      5.653956e-01
+75%      5.653956e-01
+max      5.653956e-01
+dtype: float64
+Treatment Combination: (0, 2, 2)
+Time to preprocess: 2369.8362119197845
+Training Random Forest...
+Time to Train RF: 33.29929041862488
+Train Evaluation....
+Train R2 Score: 0.1984450910323654
+Test Evaluation....
+Test R2 Score: -820657788027.3085
+Evaluation time: 1.0590260028839111
+Time for Tree Interpretation: 0.17417240142822266
+Time for SHAP explaination values: 0.10052251815795898
+(500, 13)
+(500, 13)
+count    5.000000e+02
+mean     5.653956e-01
+std      1.111335e-16
+min      5.653956e-01
+25%      5.653956e-01
+50%      5.653956e-01
+75%      5.653956e-01
+max      5.653956e-01
+dtype: float64
+Treatment Combination: (1, 0, 0)
+Time to preprocess: 2405.3553233146667
+Training Random Forest...
+Time to Train RF: 32.67592978477478
+Train Evaluation....
+Train R2 Score: 0.19903308173524603
+Test Evaluation....
+Test R2 Score: -106576483792164.36
+Evaluation time: 1.029817819595337
+Time for Tree Interpretation: 0.17498159408569336
+Time for SHAP explaination values: 0.09838151931762695
+(500, 13)
+(500, 13)
+count    5.000000e+02
+mean     5.653956e-01
+std      1.111335e-16
+min      5.653956e-01
+25%      5.653956e-01
+50%      5.653956e-01
+75%      5.653956e-01
+max      5.653956e-01
+dtype: float64
+Treatment Combination: (1, 0, 1)
+Time to preprocess: 2440.2302811145782
+Training Random Forest...
+Time to Train RF: 33.33862566947937
+Train Evaluation....
+Train R2 Score: 0.19963263830272981
+Test Evaluation....
+Test R2 Score: -1.2424074934710652e+16
+Evaluation time: 1.0589816570281982
+Time for Tree Interpretation: 0.17220711708068848
+Time for SHAP explaination values: 0.09657120704650879
+(500, 13)
+(500, 13)
+count    5.000000e+02
+mean     5.653956e-01
+std      1.111335e-16
+min      5.653956e-01
+25%      5.653956e-01
+50%      5.653956e-01
+75%      5.653956e-01
+max      5.653956e-01
+dtype: float64
+Treatment Combination: (1, 0, 2)
+Time to preprocess: 2475.791682958603
+Training Random Forest...
+Time to Train RF: 32.33844470977783
+Train Evaluation....
+Train R2 Score: 0.19875481875726408
+Test Evaluation....
+Test R2 Score: -1.81709843190737e+18
+Evaluation time: 1.0512011051177979
+Time for Tree Interpretation: 0.17418813705444336
+Time for SHAP explaination values: 0.0994875431060791
+(500, 13)
+(500, 13)
+count    5.000000e+02
+mean     5.653956e-01
+std      1.111335e-16
+min      5.653956e-01
+25%      5.653956e-01
+50%      5.653956e-01
+75%      5.653956e-01
+max      5.653956e-01
+dtype: float64
+Treatment Combination: (1, 1, 0)
+Time to preprocess: 2510.4013760089874
+Training Random Forest...
+Time to Train RF: 33.10970854759216
+Train Evaluation....
+Train R2 Score: 0.19911427064448495
+Test Evaluation....
+Test R2 Score: -2.1825020577936602e+20
+Evaluation time: 1.0367872714996338
+Time for Tree Interpretation: 0.17345023155212402
+Time for SHAP explaination values: 0.09810233116149902
+(500, 13)
+(500, 13)
+count    5.000000e+02
+mean     5.653956e-01
+std      1.111335e-16
+min      5.653956e-01
+25%      5.653956e-01
+50%      5.653956e-01
+75%      5.653956e-01
+max      5.653956e-01
+dtype: float64
+Treatment Combination: (1, 1, 1)
+Time to preprocess: 2545.7105004787445
+Training Random Forest...
+Time to Train RF: 32.82117772102356
+Train Evaluation....
+Train R2 Score: 0.19852082896235113
+Test Evaluation....
+Test R2 Score: -2.9969563489743248e+22
+Evaluation time: 1.0332958698272705
+Time for Tree Interpretation: 0.17521238327026367
+Time for SHAP explaination values: 0.09828782081604004
+(500, 13)
+(500, 13)
+count    5.000000e+02
+mean     5.653956e-01
+std      1.111335e-16
+min      5.653956e-01
+25%      5.653956e-01
+50%      5.653956e-01
+75%      5.653956e-01
+max      5.653956e-01
+dtype: float64
+Treatment Combination: (1, 1, 2)
+Time to preprocess: 2580.7284636497498
+Training Random Forest...
+Time to Train RF: 33.50024056434631
+Train Evaluation....
+Train R2 Score: 0.19937597812202723
+Test Evaluation....
+Test R2 Score: -2.283081587456431e+24
+Evaluation time: 1.0385119915008545
+Time for Tree Interpretation: 0.17271900177001953
+Time for SHAP explaination values: 0.09686851501464844
+(500, 13)
+(500, 13)
+count    5.000000e+02
+mean     5.653956e-01
+std      1.111335e-16
+min      5.653956e-01
+25%      5.653956e-01
+50%      5.653956e-01
+75%      5.653956e-01
+max      5.653956e-01
+dtype: float64
+Treatment Combination: (1, 2, 0)
+Time to preprocess: 2616.4103693962097
+Training Random Forest...
+Time to Train RF: 32.85480833053589
+Train Evaluation....
+Train R2 Score: 0.1996926754823677
+Test Evaluation....
+Test R2 Score: -2.0786027426331535e+26
+Evaluation time: 1.0339136123657227
+Time for Tree Interpretation: 0.1728508472442627
+Time for SHAP explaination values: 0.10152173042297363
+(500, 13)
+(500, 13)
+count    5.000000e+02
+mean     5.653956e-01
+std      1.111335e-16
+min      5.653956e-01
+25%      5.653956e-01
+50%      5.653956e-01
+75%      5.653956e-01
+max      5.653956e-01
+dtype: float64
+Treatment Combination: (1, 2, 1)
+Time to preprocess: 2651.4617722034454
+Training Random Forest...
+Time to Train RF: 33.371015310287476
+Train Evaluation....
+Train R2 Score: 0.19807003495553344
+Test Evaluation....
+Test R2 Score: -1.4464256250129932e+30
+Evaluation time: 1.0477025508880615
+Time for Tree Interpretation: 0.17538666725158691
+Time for SHAP explaination values: 0.09777712821960449
+(500, 13)
+(500, 13)
+count    5.000000e+02
+mean     5.653956e-01
+std      1.111335e-16
+min      5.653956e-01
+25%      5.653956e-01
+50%      5.653956e-01
+75%      5.653956e-01
+max      5.653956e-01
+dtype: float64
+Treatment Combination: (1, 2, 2)
+Time to preprocess: 2687.036607980728
+Training Random Forest...
+Time to Train RF: 32.8651487827301
+Train Evaluation....
+Train R2 Score: 0.19879870657278054
+Test Evaluation....
+Test R2 Score: 0.0
+Evaluation time: 1.0309596061706543
+Time for Tree Interpretation: 0.17444229125976562
+Time for SHAP explaination values: 0.09506607055664062
+(500, 13)
+(500, 13)
+count    5.000000e+02
+mean     5.653956e-01
+std      1.111335e-16
+min      5.653956e-01
+25%      5.653956e-01
+50%      5.653956e-01
+75%      5.653956e-01
+max      5.653956e-01
+dtype: float64
+Treatment Combination: (2, 0, 0)
+Time to preprocess: 2722.0887093544006
+Training Random Forest...
+Time to Train RF: 32.96041965484619
+Train Evaluation....
+Train R2 Score: 0.19887838756781673
+Test Evaluation....
+Test R2 Score: 0.0
+Evaluation time: 1.044706106185913
+Time for Tree Interpretation: 0.17319726943969727
+Time for SHAP explaination values: 0.09652495384216309
+(500, 13)
+(500, 13)
+count    5.000000e+02
+mean     5.653956e-01
+std      1.111335e-16
+min      5.653956e-01
+25%      5.653956e-01
+50%      5.653956e-01
+75%      5.653956e-01
+max      5.653956e-01
+dtype: float64
+Treatment Combination: (2, 0, 1)
+Time to preprocess: 2757.237369775772
+Training Random Forest...
+Time to Train RF: 32.88826894760132
+Train Evaluation....
+Train R2 Score: 0.1987712026684969
+Test Evaluation....
+Test R2 Score: 0.0
+Evaluation time: 1.0392532348632812
+Time for Tree Interpretation: 0.17510032653808594
+Time for SHAP explaination values: 0.10071659088134766
+(500, 13)
+(500, 13)
+count    5.000000e+02
+mean     5.653956e-01
+std      1.111335e-16
+min      5.653956e-01
+25%      5.653956e-01
+50%      5.653956e-01
+75%      5.653956e-01
+max      5.653956e-01
+dtype: float64
+Treatment Combination: (2, 0, 2)
+Time to preprocess: 2792.3293170928955
+Training Random Forest...
+Time to Train RF: 33.179176330566406
+Train Evaluation....
+Train R2 Score: 0.1998314395638604
+Test Evaluation....
+Test R2 Score: 0.0
+Evaluation time: 1.0376811027526855
+Time for Tree Interpretation: 0.17323637008666992
+Time for SHAP explaination values: 0.09901261329650879
+(500, 13)
+(500, 13)
+count    5.000000e+02
+mean     5.653956e-01
+std      1.111335e-16
+min      5.653956e-01
+25%      5.653956e-01
+50%      5.653956e-01
+75%      5.653956e-01
+max      5.653956e-01
+dtype: float64
+Treatment Combination: (2, 1, 0)
+Time to preprocess: 2827.7019340991974
+Training Random Forest...
+Time to Train RF: 32.217329025268555
+Train Evaluation....
+Train R2 Score: 0.1988373592985737
+Test Evaluation....
+Test R2 Score: 0.0
+Evaluation time: 1.039581537246704
+Time for Tree Interpretation: 0.17525434494018555
+Time for SHAP explaination values: 0.0995931625366211
+(500, 13)
+(500, 13)
+count    5.000000e+02
+mean     5.653956e-01
+std      1.111335e-16
+min      5.653956e-01
+25%      5.653956e-01
+50%      5.653956e-01
+75%      5.653956e-01
+max      5.653956e-01
+dtype: float64
+Treatment Combination: (2, 1, 1)
+Time to preprocess: 2862.13813996315
+Training Random Forest...
+Time to Train RF: 33.30270457267761
+Train Evaluation....
+Train R2 Score: 0.19880473023851297
+Test Evaluation....
+Test R2 Score: 0.0
+Evaluation time: 1.0263807773590088
+Time for Tree Interpretation: 0.17452287673950195
+Time for SHAP explaination values: 0.09823489189147949
+(500, 13)
+(500, 13)
+count    5.000000e+02
+mean     5.653956e-01
+std      1.111335e-16
+min      5.653956e-01
+25%      5.653956e-01
+50%      5.653956e-01
+75%      5.653956e-01
+max      5.653956e-01
+dtype: float64
+Treatment Combination: (2, 1, 2)
+Time to preprocess: 2897.6232771873474
+Training Random Forest...
+Time to Train RF: 32.60537052154541
+Train Evaluation....
+Train R2 Score: 0.1980969747702389
+Test Evaluation....
+Test R2 Score: 0.0
+Evaluation time: 1.0420215129852295
+Time for Tree Interpretation: 0.17456603050231934
+Time for SHAP explaination values: 0.09676194190979004
+(500, 13)
+(500, 13)
+count    5.000000e+02
+mean     5.653956e-01
+std      1.111335e-16
+min      5.653956e-01
+25%      5.653956e-01
+50%      5.653956e-01
+75%      5.653956e-01
+max      5.653956e-01
+dtype: float64
+Treatment Combination: (2, 2, 0)
+Time to preprocess: 2932.4312937259674
+Training Random Forest...
+Time to Train RF: 33.4702091217041
+Train Evaluation....
+Train R2 Score: 0.19894399738137436
+Test Evaluation....
+Test R2 Score: 0.0
+Evaluation time: 1.0435848236083984
+Time for Tree Interpretation: 0.17452597618103027
+Time for SHAP explaination values: 0.0974128246307373
+(500, 13)
+(500, 13)
+count    5.000000e+02
+mean     5.653956e-01
+std      1.111335e-16
+min      5.653956e-01
+25%      5.653956e-01
+50%      5.653956e-01
+75%      5.653956e-01
+max      5.653956e-01
+dtype: float64
+Treatment Combination: (2, 2, 1)
+Time to preprocess: 2968.099721431732
+Training Random Forest...
+Time to Train RF: 32.86475348472595
+Train Evaluation....
+Train R2 Score: 0.19913287492469
+Test Evaluation....
+Test R2 Score: 0.0
+Evaluation time: 1.0366692543029785
+Time for Tree Interpretation: 0.17406249046325684
+Time for SHAP explaination values: 0.09873509407043457
+(500, 13)
+(500, 13)
+count    5.000000e+02
+mean     5.653956e-01
+std      1.111335e-16
+min      5.653956e-01
+25%      5.653956e-01
+50%      5.653956e-01
+75%      5.653956e-01
+max      5.653956e-01
+dtype: float64
+Treatment Combination: (2, 2, 2)
+Time to preprocess: 3003.1602354049683
+Training Random Forest...
+Time to Train RF: 33.46846532821655
+Train Evaluation....
+Train R2 Score: 0.1988006471445266
+Test Evaluation....
+Test R2 Score: 0.0
+Evaluation time: 1.0510280132293701
+Time for Tree Interpretation: 0.17331862449645996
+Time for SHAP explaination values: 0.10049057006835938
+(500, 13)
+(500, 13)
+count    5.000000e+02
+mean     5.653956e-01
+std      1.111335e-16
+min      5.653956e-01
+25%      5.653956e-01
+50%      5.653956e-01
+75%      5.653956e-01
+max      5.653956e-01
+dtype: float64
