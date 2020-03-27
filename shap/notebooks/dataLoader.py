@@ -5,6 +5,7 @@ import numpy as np
 import csv
 import pandas as pd
 from sklearn import metrics
+from sklearn.utils import shuffle
 import pickle as pk
 import itertools
 import time
@@ -13,6 +14,7 @@ from ast import literal_eval as make_tuple
 
 
 epsilon = 0.00001
+random_seed = 1
 
 class DataLoader():
 	def __init__(self, dataset_path, covariate_columns = [], treatment_columns = [], target_columns = []):
@@ -23,6 +25,7 @@ class DataLoader():
 		self._feature_columns = self._covariate_columns.copy()
 		self._feature_columns.extend(treatment_columns)
 		self._data = pd.read_csv(self._dataset_path)
+		self._data = shuffle(self._data)
 	
 	def getShape(self):
 		return self._data.shape

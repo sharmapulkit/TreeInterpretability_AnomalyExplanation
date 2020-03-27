@@ -109,54 +109,60 @@ def mainTreatments(SAVE_RF, outdir, datasetPath, current_target, rf_n_estimators
 def main():
 	treereg = TreeRegression()		
 	start_time = time.time()
-	X_trains, logY_train_normalizeds, X_tests, logY_test_normalizeds = preprocessDataTreatment(data, feature_columns, target_columns, treatment_columns)
+	timing_info = []
+	
+	dataloader = DataLoader(datasetPath + "datasets/postgres-results.csv", covariate_columns, treatment_columns, target_columns)
+	if (tr_comb is None):
+		Xtr, logYtr, Xval, logYval, Xte, logYte = dataloader.preprocessData(train_frac=TrainValTest_split[0], val_frac=TrainValTest_split[1], test_frac=TrainValTest_split[2])
+	else:
+		Xtr, logYtr, Xval, logYval, Xte, logYte = dataloader.preprocessDataTreatmentCombo(tr_comb, train_frac=TrainValTest_split[0], val_frac=TrainValTest_split[1], test_frac=TrainValTest_split[2])
 	data_preprocessed_time = time.time()
 	print("Time to preprocess:", data_preprocessed_time - start_time)
 
-	current_target = 'runtime'
-	rf_n_estimators = 200
-	rf_max_depth = 10
+	print("Treatment Combination:", tr_comb)
+	print("Train Size:", Xtr.shape)
+	print("Val Size:",	 Xval.shape)
+	print("Test Size:",  Xte.shape)
+	treereg = TreeRegression(rf_n_estimators, rf_max_depth)
 
-	SAVE_RF = True
-	model_filename = "RF_postgres_Nest{}_maxD{}_{}".format(rf_n_estimators, rf_max_depth, 'runtime')
+	model_filename = outdir + "RF_postgres_Nest{}_maxD{}_{}_tr{}{}{}".format(rf_n_estimators, rf_max_depth, current_target, tr_comb[0], tr_comb[1], tr_comb[2])
 	if (SAVE_RF):
 		print("Training Random Forest...")
-		rf = treereg.trainRF(X_train, logY_train_normalized, current_target, rf_n_estimators, rf_max_depth)
+		treereg.trainRF(Xtr, logYtr, current_target, rf_n_estimators, rf_max_depth)
+		rf = treereg.get_model()
 		rf_trained_time = time.time()
-		pk.dump(rf, open(model_filename, 'wb'))
-		model_file_dumped = time.time()
 		print("Time to Train RF:", rf_trained_time - data_preprocessed_time)
+
+		pk.dump(rf, open(model_filename, 'wb'))
+		loaded_model_timestamp = time.time()
 	else:
 		rf = pk.load(open(model_filename, 'rb'))	
-		loaded_model = time.time()
-		print("Time to load model:", loaded_model - data_preprocessed_time)
+		loaded_model_timestamp = time.time()
+		print("Time to load model:", loaded_model_timestamp - data_preprocessed_time)
 
-	#print("Train Evaluation....")
-	
-	#treereg.evaluateRF(X_train, logY_train_normalized, rf, current_target)
-	#print(Y_test.isna().sum())
-	#print(logY_test_normalized.isna().sum())
+	print("Train Evaluation....")
+	trainMSE, trainR2 = treereg.evaluateRF(Xtr, logYtr.loc[:, current_target])
+	print("Train R2 Score:", trainR2)
 	print("Test Evaluation....")
-	#treereg.evaluateRF(X_test, logY_test_normalized, rf, current_target)
-	#print(X_test.shape)
-	#print(logY_test_normalized.loc[:, current_target].shape)
-	treereg.evaluateRF(X_test, Y_test.loc[:, current_target], rf, current_target)
-	treereg.evaluateRF(X_test, logY_test_normalized.loc[:, current_target], rf, current_target)
-	print("Evaluation time:", time.time() - loaded_model)
+	testMSE, testR2 = treereg.evaluateRF(Xte, logYte.loc[:, current_target])
+	print("Test R2 Score:", testR2)
+	evaluationTimestamp = time.time()
+	print("Evaluation time:", evaluationTimestamp - loaded_model_timestamp)
 	
-	evaluated_time = time.time()
-	ti_preds, ti_biases, ti_contribs = ti.predict(rf, X_test[:500])
-	ti_values_time = time.time()
-	print("Time for Tree Interpretation:", ti_values_time - evaluated_time)
-	
-	explainer = shap.TreeExplainer(rf)
-	shap_values = explainer.shap_values(X_test[:500])
-	shap_values_time = time.time()
-	print("Time for SHAP explaination values:", shap_values_time - ti_values_time)
-	
+	ti_preds, ti_biases, ti_contribs, ti_runtime = compute_ti_attribution(rf, Xte[:500])
+	shap_values, shap_runtime = compute_shap_attribution(rf, Xte[:500])
 	print(ti_contribs.shape)
 	print(shap_values.shape)
-	print_spearmanr(ti_contribs, shap_values)
+	utils.print_spearmanr(ti_contribs, shap_values)
+	
+	##### Write the comparison data to a file
+	timing_info.append(data_preprocessed_time - start_time)
+	timing_info.append(rf_trained_time - data_preprocessed_time)
+	timing_info.append(loaded_model_timestamp - data_preprocessed_time)
+	timing_info.append(evaluationTimestamp - loaded_model_timestamp)
+	timing_info.append(ti_values_time - evaluated_time)
+	timing_info.append(shap_values_time - ti_values_time)
+	utils.write_timing_info_file(timing_info_outfile, timing_info)
 
 if __name__=="__main__":
 	parser = argparse.ArgumentParser(description='Parser for training RF on dataset')
