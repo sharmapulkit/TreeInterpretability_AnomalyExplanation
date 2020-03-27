@@ -24,13 +24,28 @@ import utils
 
 epsilon = 0.00001
 
-####### Define Output, Covariate and Treatment columns names
+####### Define Output, Covariate and Treatment columns names for postgreSQL Dataset
 target_columns 	  = ['local_written_blocks', 'temp_written_blocks', 'shared_hit_blocks', 'temp_read_blocks', 'local_read_blocks', 'runtime', 'shared_read_blocks']
 treatment_columns = ['index_level', 'page_cost', 'memory_level']
 covariate_columns = ['rows', 'creation_year', 'num_ref_tables', 'num_joins', 'num_group_by', 'queries_by_user', 'length_chars', 'total_ref_rows', 'local_hit_blocks', 'favorite_count']
 feature_columns   = covariate_columns.copy()
 feature_columns.extend(treatment_columns)
 ######################################################
+
+def compute_ti_attribution(model, data):
+	ti_start_time = time.time()
+	ti_preds, ti_biases, ti_contribs = ti.predict(model, data)
+	ti_end_time = time.time()
+	print("Time for Tree Interpretation:", ti_end_time - ti_start_time)
+	return ti_preds, ti_biases, ti_contribs, (ti_end_time - ti_start_time)
+
+def compute_shap_attribution(model, data):
+	shap_start_time = time.time()
+	explainer = shap.TreeExplainer(model)
+	shap_values = explainer.shap_values(data)
+	shap_end_time = time.time()
+	print("Time for SHAP explaination values:", shap_end_time - shap_start_time)
+	return shape_values, (shap_end_time - shap_start_time)
 
 
 def mainTreatments(SAVE_RF, outdir, datasetPath, current_target, rf_n_estimators, rf_max_depth, timing_info_outfile, tr_comb=None, TrainValTest_split=(0.6,0.2,0.2)):
@@ -75,20 +90,13 @@ def mainTreatments(SAVE_RF, outdir, datasetPath, current_target, rf_n_estimators
 	evaluationTimestamp = time.time()
 	print("Evaluation time:", evaluationTimestamp - loaded_model_timestamp)
 	
-	evaluated_time = time.time()
-	ti_preds, ti_biases, ti_contribs = ti.predict(rf, Xte[:500])
-	ti_values_time = time.time()
-	print("Time for Tree Interpretation:", ti_values_time - evaluated_time)
-
-	explainer = shap.TreeExplainer(rf)
-	shap_values = explainer.shap_values(Xte[:500])
-	shap_values_time = time.time()
-	print("Time for SHAP explaination values:", shap_values_time - ti_values_time)
-
+	ti_preds, ti_biases, ti_contribs, ti_runtime = compute_ti_attribution(rf, Xte[:500])
+	shap_values, shap_runtime = compute_shap_attribution(rf, Xte[:500])
 	print(ti_contribs.shape)
 	print(shap_values.shape)
 	utils.print_spearmanr(ti_contribs, shap_values)
-
+	
+	##### Write the comparison data to a file
 	timing_info.append(data_preprocessed_time - start_time)
 	timing_info.append(rf_trained_time - data_preprocessed_time)
 	timing_info.append(loaded_model_timestamp - data_preprocessed_time)
@@ -96,6 +104,7 @@ def mainTreatments(SAVE_RF, outdir, datasetPath, current_target, rf_n_estimators
 	timing_info.append(ti_values_time - evaluated_time)
 	timing_info.append(shap_values_time - ti_values_time)
 	utils.write_timing_info_file(timing_info_outfile, timing_info)
+
 
 def main():
 	treereg = TreeRegression()		
@@ -161,6 +170,7 @@ if __name__=="__main__":
 	parser.add_argument('--treatment_combination', help='Configuration of treatment variables')
 	parser.add_argument('--timing_info_outfile', help='Output file to store timing information')
 	parser.add_argument('--TrainValTest_split', help='Tuple with split ratios of dataset')
+
 	args = vars(parser.parse_args())
 	print(args['treatment_combination'])
 	print(make_tuple(args['treatment_combination']))

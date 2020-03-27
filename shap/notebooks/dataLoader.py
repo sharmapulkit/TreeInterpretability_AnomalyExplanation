@@ -23,6 +23,9 @@ class DataLoader():
 		self._feature_columns = self._covariate_columns.copy()
 		self._feature_columns.extend(treatment_columns)
 		self._data = pd.read_csv(self._dataset_path)
+	
+	def getShape(self):
+		return self._data.shape
 
 	####### Normalize columns ########
 	def normalize_columns(self, columns):
@@ -44,19 +47,19 @@ class DataLoader():
 		return
 
 	def preprocessData(self, train_frac=0.7, val_frac=0.0, test_frac=0.3):
-		train_size = int(data.shape[0]*train_frac)
-		val_size = int(data.shape[0]*val_frac)
-		test_size = int(data.shape[0]*test_frac)
+		train_size = int(self._data.shape[0]*train_frac)
+		val_size = int(self._data.shape[0]*val_frac)
+		test_size = int(self._data.shape[0]*test_frac)
 		self.logNormalizeTargets()
 		
 		X_train = self._data[self._feature_columns][:train_size]
 		logYtrain_normalized = self._data[self._target_columns][:train_size]
 
-		X_val = self._data[self._feature_columns][train_size:train_size + val_size]
-		logYval_normalized = self._data[self._target_columns][train_size:train_size + val_size]
+		X_val = self._data[self._feature_columns][train_size: train_size + val_size]
+		logYval_normalized = self._data[self._target_columns][train_size: train_size+val_size]
 
-		X_test = self._data[self._feature_columns][train_size + val_size:]
-		logYtest_normalized = self._data[self._target_columns][train_size + val_size:]
+		X_test = self._data[self._feature_columns][train_size + val_size: train_size+val_size+test_size]
+		logYtest_normalized = self._data[self._target_columns][train_size + val_size: train_size+val_size+test_size]
 
 		return X_train, logYtrain_normalized, X_val, logYval_normalized, X_test, logYtest_normalized
 
@@ -73,14 +76,13 @@ class DataLoader():
 		treatX_train = _data_copy[self._feature_columns][:train_size]
 		treatY_train = _data_copy[self._target_columns][:train_size]
 
-		treatX_val = _data_copy[self._feature_columns][train_size:train_size + val_size]
-		treatY_val = _data_copy[self._target_columns][train_size:train_size + val_size]
+		treatX_val = _data_copy[self._feature_columns][train_size:train_size+val_size]
+		treatY_val = _data_copy[self._target_columns][train_size:train_size+val_size]
 
-		treatX_test = _data_copy[self._feature_columns][train_size+val_size:]
-		treatY_test = _data_copy[self._target_columns][train_size+val_size:]
+		treatX_test = _data_copy[self._feature_columns][train_size+val_size: train_size+val_size+test_size]
+		treatY_test = _data_copy[self._target_columns][train_size+val_size: train_size+val_size+test_size]
 
 		return treatX_train, treatY_train, treatX_val, treatY_val, treatX_test, treatY_test
-
 
 
 	def preprocessDataTreatment(self, train_frac=0.7, val_frac=0.0, test_frac=0.3):
