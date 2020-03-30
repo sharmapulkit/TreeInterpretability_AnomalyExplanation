@@ -7,6 +7,8 @@ datasets/*.csv
 trainedNetworks*
 .nfs*
 *.png
-trainedModels*
+trainedModels*j=
 *bk*
 *pycache*
+datasets/postgresTemplates*
+shap/notebooks/trainedModels*
