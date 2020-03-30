@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import rbo
+import matplotlib.pyplot as plt
 
 
 def print_rbo(ranking1, ranking2):
