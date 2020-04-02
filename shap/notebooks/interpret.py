@@ -45,7 +45,7 @@ def compute_shap_attribution(model, data):
 	print("Time for SHAP explaination values:", shap_end_time - shap_start_time)
 	return shap_values, (shap_end_time - shap_start_time)
 
-def main(datasetPath, modelPath, outdir_ti_contribs, outdir_shap_contribs, dataStartPoint, dataEndPoint, TVT=(0.7, 0.1, 0.2)):
+def main(datasetPath, modelPath, outdir_ti_contribs, outdir_shap_contribs, dataStartPoint=None, dataEndPoint=None, TVT=(0.7, 0.1, 0.2)):
 	##### Load dataset ###### 
 	dataloader = DataLoader(datasetPath, covariate_columns, treatment_columns, target_columns)
 	num_dataPoints, featSize = dataloader.getShape()
@@ -53,10 +53,14 @@ def main(datasetPath, modelPath, outdir_ti_contribs, outdir_shap_contribs, dataS
 	###### select subset of dataset and run TI, SHAP
 	rf = pk.load(open(modelPath, 'rb'))
 
-	if (dataEndPoint < len(Xte)):
-		Xsub = Xte[dataStartPoint:dataEndPoint]
+	if (dataEndPoint is not None):
+		if (dataEndPoint < len(Xte)):
+			Xsub = Xte[dataStartPoint:dataEndPoint]
+		else:
+			Xsub = Xte[dataStartPoint:]
 	else:
-		Xsub = Xte[dataStartPoint:]
+		Xsub = Xte
+
 	ti_preds, ti_biases, ti_contribs, ti_runtime = compute_ti_attribution(rf, Xsub)
 	shap_values, shap_runtime = compute_shap_attribution(rf, Xsub)
 	print(ti_contribs.shape)
@@ -66,7 +70,6 @@ def main(datasetPath, modelPath, outdir_ti_contribs, outdir_shap_contribs, dataS
 	np.savetxt(outdir_ti_contribs, ti_contribs)
 	np.savetxt(outdir_shap_contribs, shap_values)
 	
-
 if __name__=="__main__":
 	parser = argparse.ArgumentParser(description='Parser for training RF on dataset')
 	parser.add_argument('--dataset_dir', help='Path to dataset csv file')
@@ -78,8 +81,12 @@ if __name__=="__main__":
 	parser.add_argument('--TrainValTest_split', help='Tuple with split ratios of dataset')
 
 	args = vars(parser.parse_args())
-	#print(args['treatment_combination'])
-	#print(make_tuple(args['treatment_combination']))
-	main(args['dataset_dir'], args['model_dir'], args['outdir_ti_contribs'], args['outdir_shap_contribs'], int(args['datapoint_start']), int(args['datapoint_end']), make_tuple(args['TrainValTest_split']))
+	# print(args['treatment_combination'])
+	# print(make_tuple(args['treatment_combination']))
+
+	if ((args['datapoint_start'] is not None) and (args['datapoint_end'] is not None)):
+		main(args['dataset_dir'], args['model_dir'], args['outdir_ti_contribs'], args['outdir_shap_contribs'], int(args['datapoint_start']), int(args['datapoint_end']), make_tuple(args['TrainValTest_split']))
+	else:
+		main(args['dataset_dir'], args['model_dir'], args['outdir_ti_contribs'], args['outdir_shap_contribs'], TVT=make_tuple(args['TrainValTest_split']))
 	# mainTreatments((args['save_model'].lower()=='true'), args['outdir'], args['dataset_dir'], args['current_target'], int(args['num_tree_estimators']), int(args['max_depth']), \
 #						args['timing_info_outfile'], make_tuple(args['treatment_combination']), make_tuple(args['TrainValTest_split']) )
