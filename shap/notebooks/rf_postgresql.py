@@ -17,19 +17,17 @@ import time
 import argparse
 from ast import literal_eval as make_tuple
 from scipy.stats import spearmanr
+import os
 
 from dataLoader import *
 from treeRegressor import *
 import utils
 
+
 epsilon = 0.00001
 
-####### Define Output, Covariate and Treatment columns names for postgreSQL Dataset
-target_columns 	  = ['local_written_blocks', 'temp_written_blocks', 'shared_hit_blocks', 'temp_read_blocks', 'local_read_blocks', 'runtime', 'shared_read_blocks']
-treatment_columns = ['index_level', 'page_cost', 'memory_level']
-covariate_columns = ['rows', 'creation_year', 'num_ref_tables', 'num_joins', 'num_group_by', 'queries_by_user', 'length_chars', 'total_ref_rows', 'local_hit_blocks', 'favorite_count']
-feature_columns   = covariate_columns.copy()
-feature_columns.extend(treatment_columns)
+####### Import Output, Covariate and Treatment columns names for postgreSQL Datasetp
+from postgresql_dataConfig import *
 ######################################################
 
 def compute_ti_attribution(model, data):
@@ -45,14 +43,41 @@ def compute_shap_attribution(model, data):
 	shap_values = explainer.shap_values(data)
 	shap_end_time = time.time()
 	print("Time for SHAP explaination values:", shap_end_time - shap_start_time)
-	return shape_values, (shap_end_time - shap_start_time)
+	return shap_values, (shap_end_time - shap_start_time)
+
+def trainRF(SAVE_RF, outdir, datasetPath, current_target, rf_n_estimators, rf_max_depth, TrainValTest_split=(0.6,0.2,0.2)):
+	"""
+	Train a Random Forest with given training dataset
+	"""
+	start_time = time.time()
+	timing_info = []
+	if os.path.exists(outdir):
+		print("File Exists at given outdir. Rename outdir.")
+		return
+	
+	dataloader = DataLoader(datasetPath, covariate_columns, treatment_columns, target_columns)
+	Xtr, logYtr, _, _, _, _ = dataloader.preprocessData(train_frac=TrainValTest_split[0], val_frac=TrainValTest_split[1], test_frac=TrainValTest_split[2])
+	data_preprocessed_time = time.time()
+	print("Time to preprocess:", data_preprocessed_time - start_time)
+	print("Train Size:", Xtr.shape)
+	treereg = TreeRegression(rf_n_estimators, rf_max_depth)
+
+	if (SAVE_RF):
+		print("Training Random Forest...")
+		treereg.trainRF(Xtr, logYtr, current_target, rf_n_estimators, rf_max_depth)
+		rf = treereg.get_model()
+		rf_trained_time = time.time()
+		print("Time to Train RF:", rf_trained_time - data_preprocessed_time)
+
+		pk.dump(rf, open(outdir, 'wb'))
+		loaded_model_timestamp = time.time()
 
 
 def mainTreatments(SAVE_RF, outdir, datasetPath, current_target, rf_n_estimators, rf_max_depth, timing_info_outfile, tr_comb=None, TrainValTest_split=(0.6,0.2,0.2)):
 	start_time = time.time()
 	timing_info = []
 	
-	dataloader = DataLoader(datasetPath + "datasets/postgres-results.csv", covariate_columns, treatment_columns, target_columns)
+	dataloader = DataLoader(datasetPath, covariate_columns, treatment_columns, target_columns)
 	if (tr_comb is None):
 		Xtr, logYtr, Xval, logYval, Xte, logYte = dataloader.preprocessData(train_frac=TrainValTest_split[0], val_frac=TrainValTest_split[1], test_frac=TrainValTest_split[2])
 	else:
@@ -106,26 +131,22 @@ def mainTreatments(SAVE_RF, outdir, datasetPath, current_target, rf_n_estimators
 	utils.write_timing_info_file(timing_info_outfile, timing_info)
 
 
-def main():
-	treereg = TreeRegression()		
-	start_time = time.time()
+def main( SAVE_RF, outdir, datasetPath, current_target, rf_n_estimators, rf_max_depth, timing_info_outfile, TrainValTest_split=(0.6,0.2,0.2) ):
 	timing_info = []
+	start_time = time.time()
 	
-	dataloader = DataLoader(datasetPath + "datasets/postgres-results.csv", covariate_columns, treatment_columns, target_columns)
-	if (tr_comb is None):
-		Xtr, logYtr, Xval, logYval, Xte, logYte = dataloader.preprocessData(train_frac=TrainValTest_split[0], val_frac=TrainValTest_split[1], test_frac=TrainValTest_split[2])
-	else:
-		Xtr, logYtr, Xval, logYval, Xte, logYte = dataloader.preprocessDataTreatmentCombo(tr_comb, train_frac=TrainValTest_split[0], val_frac=TrainValTest_split[1], test_frac=TrainValTest_split[2])
+	dataloader = DataLoader(datasetPath, covariate_columns, treatment_columns, target_columns)
+	Xtr, logYtr, Xval, logYval, Xte, logYte = dataloader.preprocessData(train_frac=TrainValTest_split[0], val_frac=TrainValTest_split[1], test_frac=TrainValTest_split[2])
+	
 	data_preprocessed_time = time.time()
 	print("Time to preprocess:", data_preprocessed_time - start_time)
 
-	print("Treatment Combination:", tr_comb)
 	print("Train Size:", Xtr.shape)
 	print("Val Size:",	 Xval.shape)
 	print("Test Size:",  Xte.shape)
 	treereg = TreeRegression(rf_n_estimators, rf_max_depth)
 
-	model_filename = outdir + "RF_postgres_Nest{}_maxD{}_{}_tr{}{}{}".format(rf_n_estimators, rf_max_depth, current_target, tr_comb[0], tr_comb[1], tr_comb[2])
+	model_filename = outdir + "RF_postgres_Nest{}_maxD{}_{}.pk".format(rf_n_estimators, rf_max_depth, current_target)
 	if (SAVE_RF):
 		print("Training Random Forest...")
 		treereg.trainRF(Xtr, logYtr, current_target, rf_n_estimators, rf_max_depth)
@@ -166,7 +187,9 @@ def main():
 
 if __name__=="__main__":
 	parser = argparse.ArgumentParser(description='Parser for training RF on dataset')
+
 	parser.add_argument('--save_model', help='Boolean flag to save a model or not')
+	parser.add_argument('--evalutaion', help='Boolean flag to evaluate or not')
 	parser.add_argument('--dataset_dir', help='Path to dataset csv file')
 	parser.add_argument('--current_target', help='string label for current target label')
 	parser.add_argument('--num_tree_estimators', help='Number of trees in Foreset based regression model')
@@ -178,7 +201,16 @@ if __name__=="__main__":
 	parser.add_argument('--TrainValTest_split', help='Tuple with split ratios of dataset')
 
 	args = vars(parser.parse_args())
-	print(args['treatment_combination'])
-	print(make_tuple(args['treatment_combination']))
-	mainTreatments((args['save_model'].lower()=='true'), args['outdir'], args['dataset_dir'], args['current_target'], int(args['num_tree_estimators']), int(args['max_depth']), \
-						args['timing_info_outfile'], make_tuple(args['treatment_combination']), make_tuple(args['TrainValTest_split']) )
+
+	if (args['evalutaion'].lower() == 'true'):
+		if (args['treatmentTraining'].lower() == 'false'):
+			main((args['save_model'].lower()=='true'), args['outdir'], args['dataset_dir'], args['current_target'], int(args['num_tree_estimators']), int(args['max_depth']), \
+								args['timing_info_outfile'], make_tuple(args['TrainValTest_split']) )
+		else:
+			print(args['treatment_combination'])
+			print(make_tuple(args['treatment_combination']))
+			mainTreatments((args['save_model'].lower()=='true'), args['outdir'], args['dataset_dir'], args['current_target'], int(args['num_tree_estimators']), int(args['max_depth']), \
+								args['timing_info_outfile'], make_tuple(args['treatment_combination']), make_tuple(args['TrainValTest_split']) )
+	else:
+		trainRF( args['save_model'].lower()=='true', args['outdir'], args['dataset_dir'], args['current_target'], int(args['num_tree_estimators']), int(args['max_depth']),	make_tuple(args['TrainValTest_split']) )
+

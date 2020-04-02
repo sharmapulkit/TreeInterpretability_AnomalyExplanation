@@ -23,11 +23,7 @@ from treeRegressor import *
 import utils
 
 ### Define Output, Covariate and Treatment columns names for postgreSQL Dataset
-target_columns    = ['local_written_blocks', 'temp_written_blocks', 'shared_hit_blocks', 'temp_read_blocks', 'local_read_blocks', 'runtime', 'shared_read_blocks']
-treatment_columns = ['index_level', 'page_cost', 'memory_level']
-covariate_columns = ['rows', 'creation_year', 'num_ref_tables', 'num_joins', 'num_group_by', 'queries_by_user', 'length_chars', 'total_ref_rows', 'local_hit_blocks', 'favorite_count']
-feature_columns   = covariate_columns.copy()
-feature_columns.extend(treatment_columns)
+from postgresql_dataConfig import *
 ######################################################
 
 def compute_ti_attribution(model, data):
@@ -88,5 +84,4 @@ if __name__=="__main__":
 		main(args['dataset_dir'], args['model_dir'], args['outdir_ti_contribs'], args['outdir_shap_contribs'], int(args['datapoint_start']), int(args['datapoint_end']), make_tuple(args['TrainValTest_split']))
 	else:
 		main(args['dataset_dir'], args['model_dir'], args['outdir_ti_contribs'], args['outdir_shap_contribs'], TVT=make_tuple(args['TrainValTest_split']))
-	# mainTreatments((args['save_model'].lower()=='true'), args['outdir'], args['dataset_dir'], args['current_target'], int(args['num_tree_estimators']), int(args['max_depth']), \
-#						args['timing_info_outfile'], make_tuple(args['treatment_combination']), make_tuple(args['TrainValTest_split']) )
+=======
