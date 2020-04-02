@@ -28,6 +28,9 @@ class TreeRegression():
 	######### Getter ##########
 	def get_model(self):
 		return self.model
+	def set_model(self, model):
+		self.model = model
+		return
 
 	######### Setter ##########
 	def set_nEst(self, n_est):
