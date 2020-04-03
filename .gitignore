@@ -12,3 +12,4 @@ trainedModels*j=
 *pycache*
 datasets/postgresTemplates*
 shap/notebooks/trainedModels*
+*.jpg
