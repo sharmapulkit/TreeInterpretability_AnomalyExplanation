@@ -7,9 +7,11 @@ datasets/*.csv
 trainedNetworks*
 .nfs*
 *.png
-trainedModels*j=
+trainedModels*
 *bk*
 *pycache*
 datasets/postgresTemplates*
 shap/notebooks/trainedModels*
 *.jpg
+*flipped_bits.py
+*timingAnalysis.py

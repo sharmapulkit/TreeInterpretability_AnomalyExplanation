@@ -1,0 +1,39 @@
++ allCommand=
++ '[' 7 -gt 0 ']'
++ allCommand='  python '
++ shift
++ '[' 6 -gt 0 ']'
++ allCommand='   python  interpret.py '
++ shift
++ '[' 5 -gt 0 ']'
++ allCommand='    python  interpret.py  --dataset_dir=/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/postgresTemplates/some_500_train_points.csv '
++ shift
++ '[' 4 -gt 0 ']'
++ allCommand='     python  interpret.py  --dataset_dir=/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/postgresTemplates/some_500_train_points.csv  --model_dir=/mnt/nfs/scratch1/s20psharma/TreeInterpretability/trainedNets/postgresTemplates/train_200_combos/rf_postgresql_runtime_200combos.pk '
++ shift
++ '[' 3 -gt 0 ']'
++ allCommand='      python  interpret.py  --dataset_dir=/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/postgresTemplates/some_500_train_points.csv  --model_dir=/mnt/nfs/scratch1/s20psharma/TreeInterpretability/trainedNets/postgresTemplates/train_200_combos/rf_postgresql_runtime_200combos.pk  --outdir_ti_contribs=/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/postgresTemplates/../../_interpreted_TI_outs_500_train_points.txt '
++ shift
++ '[' 2 -gt 0 ']'
++ allCommand='       python  interpret.py  --dataset_dir=/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/postgresTemplates/some_500_train_points.csv  --model_dir=/mnt/nfs/scratch1/s20psharma/TreeInterpretability/trainedNets/postgresTemplates/train_200_combos/rf_postgresql_runtime_200combos.pk  --outdir_ti_contribs=/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/postgresTemplates/../../_interpreted_TI_outs_500_train_points.txt  --outdir_shap_contribs=/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/postgresTemplates/../../_interpreted_SHAP_outs_500_train_points.txt '
++ shift
++ '[' 1 -gt 0 ']'
++ allCommand='        python  interpret.py  --dataset_dir=/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/postgresTemplates/some_500_train_points.csv  --model_dir=/mnt/nfs/scratch1/s20psharma/TreeInterpretability/trainedNets/postgresTemplates/train_200_combos/rf_postgresql_runtime_200combos.pk  --outdir_ti_contribs=/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/postgresTemplates/../../_interpreted_TI_outs_500_train_points.txt  --outdir_shap_contribs=/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/postgresTemplates/../../_interpreted_SHAP_outs_500_train_points.txt  --TrainValTest_split=(0.0,0.0,1.0) '
++ shift
++ '[' 0 -gt 0 ']'
++ python interpret.py --dataset_dir=/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/postgresTemplates/some_500_train_points.csv --model_dir=/mnt/nfs/scratch1/s20psharma/TreeInterpretability/trainedNets/postgresTemplates/train_200_combos/rf_postgresql_runtime_200combos.pk --outdir_ti_contribs=/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/postgresTemplates/../../_interpreted_TI_outs_500_train_points.txt --outdir_shap_contribs=/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/postgresTemplates/../../_interpreted_SHAP_outs_500_train_points.txt '--TrainValTest_split=(0.0,0.0,1.0)'
+The sklearn.ensemble.forest module is  deprecated in version 0.22 and will be removed in version 0.24. The corresponding classes / functions should instead be imported from sklearn.ensemble. Anything that cannot be imported from sklearn.ensemble is now part of the private API.
+Setting feature_perturbation = "tree_path_dependent" because no background data was given.
+Time for Tree Interpretation: 100.69846987724304
+Time for SHAP explaination values: 1777.7613615989685
+(500, 13)
+(500, 13)
+count    500.000000
+mean       0.781889
+std        0.129404
+min        0.340659
+25%        0.712912
+50%        0.824176
+75%        0.862637
+max        0.978022
+dtype: float64
