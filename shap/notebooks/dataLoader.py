@@ -25,6 +25,8 @@ class DataLoader():
 		self._feature_columns = self._covariate_columns.copy()
 		self._feature_columns.extend(treatment_columns)
 		self._data = pd.read_csv(self._dataset_path)
+
+	def shuffleData(self):
 		self._data = shuffle(self._data)
 	
 	def getShape(self):
