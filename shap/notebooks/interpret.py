@@ -70,8 +70,13 @@ def main(datasetPath, modelPath, outdir_ti_contribs, outdir_shap_contribs, dataS
 			f.write("SHAP Runtime:" + str(shap_runtime))
 			f.write('\n')
 	
-	np.savetxt(outdir_ti_contribs, ti_contribs)
-	np.savetxt(outdir_shap_contribs, shap_values)
+	#np.savetxt(outdir_ti_contribs, ti_contribs)
+	#np.savetxt(outdir_shap_contribs, shap_values)
+
+	ti_contribs_df = pd.DataFrame(ti_contribs, columns=feature_columns)
+	shap_contribs_df = pd.DataFrame(shap_values, columns=feature_columns)
+	ti_contribs_df.to_csv(outdir_ti_contribs)
+	shap_contribs_df.to_csv(outdir_shap_contribs)
 	
 	
 if __name__=="__main__":
