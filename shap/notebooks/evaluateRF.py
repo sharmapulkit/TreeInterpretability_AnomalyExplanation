@@ -45,7 +45,7 @@ def compute_shap_attribution(model, data):
 	print("Time for SHAP explaination values:", shap_end_time - shap_start_time)
 	return shap_values, (shap_end_time - shap_start_time)
 
-def evaluateRF(modelPath, datasetPath, current_target, TrainValTest_split=(1.0,0.0,0.0)):
+def evaluateRF(modelPath, datasetPath, current_target, TrainValTest_split=(1.0,0.0,0.0), outdir=None):
 	"""
 	Train a Random Forest with given training dataset
 	"""
@@ -66,6 +66,13 @@ def evaluateRF(modelPath, datasetPath, current_target, TrainValTest_split=(1.0,0
 	testMSE, testR2 = treereg.evaluateRF(X, logY.loc[:, current_target])
 	print("Test R2 Score:", testR2)
 
+	if not outdir is None:
+		with open(outdir, 'w') as f:
+			f.write("MSE:"+ str(testMSE))
+			f.write('\n')
+			f.write("R2:"+ str(testR2))
+			f.write('\n')
+
 
 if __name__=="__main__":
 	parser = argparse.ArgumentParser(description='Parser for training RF on dataset')
@@ -74,8 +81,10 @@ if __name__=="__main__":
 	parser.add_argument('--dataset_dir', help='Path to dataset csv file')
 	parser.add_argument('--current_target', help='string label for current target label')
 	parser.add_argument('--TrainValTest_split', help='Tuple with split ratios of dataset')
+	parser.add_argument('--outdir', help='Dump the evaluation Metric to this file')
 
 	args = vars(parser.parse_args())
 
-	evaluateRF( args['model_dir'], args['dataset_dir'], args['current_target'],	make_tuple(args['TrainValTest_split']) )
+	evaluateRF( args['model_dir'], args['dataset_dir'], args['current_target'],	make_tuple(args['TrainValTest_split']), outdir=args['outdir'])
+
 
