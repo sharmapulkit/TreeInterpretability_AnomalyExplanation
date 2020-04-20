@@ -8,3 +8,10 @@ trainedNetworks*
 .nfs*
 *.png
 trainedModels*
+*bk*
+*pycache*
+datasets/postgresTemplates*
+shap/notebooks/trainedModels*
+*.jpg
+*flipped_bits.py
+*timingAnalysis.py
