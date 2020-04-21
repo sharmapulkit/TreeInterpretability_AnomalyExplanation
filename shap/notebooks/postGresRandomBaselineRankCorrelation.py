@@ -31,18 +31,28 @@ def calculateFeatureDifference(baselineContribution, testContribution):
 	return testContribution - baselineContribution
 
 def _getRankingFiles(shapFile, tiFile, shapBaseline, tiBaseline):	
+	"""
+	Get Ranking Files
+	"""
 	if not os.path.exists(tiFile):
 		raise exception('no ti file exists against corresponding shap file')
-	
-	shapvalues = np.loadtxt(shapFile)
+
+	#shapvalues = np.loadtxt(shapFile)
+	shapvalues = pd.read_csv(shapFile)[feature_columns].values
 	shapdifferenceranking = calculateFeatureDifference(shapBaseline, shapvalues)
 	print(shapvalues.shape, "//", shapdifferenceranking.shape)
-	tidifferenceranking = calculateFeatureDifference(tiBaseline, np.loadtxt(tiFile))
+
+	tivalues = pd.read_csv(tiFile)[feature_columns].values
+	tidifferenceranking = calculateFeatureDifference(tiBaseline, tivalues)
+	print(tivalues.shape, "//", tidifferenceranking.shape)
 
 	return shapdifferenceranking, tidifferenceranking
 
 
 def getRankingFiles(modelDir, testDir, trainDir, outDir):
+	"""
+	Get Ranking Files
+	"""
 	rf = pk.load(open(modelDir, 'rb'))
 	shapDataFiles_All = glob.glob(os.path.join(testDir, 'interpreted*SHAP*test.txt'))
 	# tiDataFiles = glob.glob(os.path.join(testDir, '*TI*test.txt'))
@@ -97,14 +107,17 @@ def getRankingFiles(modelDir, testDir, trainDir, outDir):
 		########### Write outputs of difference contributions ########
 		print(shapDataFiles[template_id])
 		shapBaseline_outfile = os.path.join(outDir, os.path.basename(shapDataFiles[template_id]).replace("interpreted", "diffInterpreted").replace("SHAP", "SHAP_baseline_{}".format(template_id)))
-		tiBaseline_outfile = os.path.join(outDir, os.path.basename(shapDataFiles[template_id]).replace("interpreted", "diffInterpreted").replace("TI", "TI_baseline_{}".format(template_id)))
+		tiBaseline_outfile = os.path.join(outDir, os.path.basename(shapDataFiles[template_id]).replace("interpreted", "diffInterpreted").replace("SHAP", "TI_baseline_{}".format(template_id)))
 		np.savetxt(shapBaseline_outfile, BaselineCases_df.iloc[template_id])
 		np.savetxt(tiBaseline_outfile, BaselineCases_df.iloc[template_id]) 
 
 		shapDiffContrib_outfile = os.path.join(outDir, os.path.basename(shapDataFiles[template_id]).replace("interpreted", "diffInterpreted"))
 		tidiffContrib_outfile = os.path.join(outDir, os.path.basename(tiDataFiles[template_id]).replace("interpreted", "diffInterpreted"))
-		np.savetxt(shapDiffContrib_outfile, shapContrib)
-		np.savetxt(tidiffContrib_outfile, tiContrib)
+
+		pd.DataFrame(shapContrib, columns=feature_columns).to_csv(shapDiffContrib_outfile)
+		pd.DataFrame(tiContrib, columns=feature_columns).to_csv(tidiffContrib_outfile)
+		#np.savetxt(shapDiffContrib_outfile, shapContrib)
+		#np.savetxt(tidiffContrib_outfile, tiContrib)
 		print("Saved for {}".format(shapDiffContrib_outfile))
 
 

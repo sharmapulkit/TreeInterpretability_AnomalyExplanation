@@ -41,7 +41,7 @@ def compute_shap_attribution(model, data):
 	print("Time for SHAP explaination values:", shap_end_time - shap_start_time)
 	return shap_values, (shap_end_time - shap_start_time)
 
-def main(datasetPath, modelPath, outdir_ti_contribs, outdir_shap_contribs, dataStartPoint=None, dataEndPoint=None, TVT=(0.7, 0.1, 0.2)):
+def main(datasetPath, modelPath, outdir_ti_contribs, outdir_shap_contribs, dataStartPoint=None, dataEndPoint=None, TVT=(0.7, 0.1, 0.2), timing_outFile=None):
 	##### Load dataset ###### 
 	dataloader = DataLoader(datasetPath, covariate_columns, treatment_columns, target_columns)
 	num_dataPoints, featSize = dataloader.getShape()
@@ -63,8 +63,21 @@ def main(datasetPath, modelPath, outdir_ti_contribs, outdir_shap_contribs, dataS
 	print(shap_values.shape)
 	coeffs = utils.print_spearmanr(ti_contribs, shap_values)
 
-	np.savetxt(outdir_ti_contribs, ti_contribs)
-	np.savetxt(outdir_shap_contribs, shap_values)
+	if (timing_outFile is not None):
+		with open(timing_outFile, 'w') as f:
+			f.write("TI Runtime:" + str(ti_runtime))
+			f.write('\n')
+			f.write("SHAP Runtime:" + str(shap_runtime))
+			f.write('\n')
+	
+	#np.savetxt(outdir_ti_contribs, ti_contribs)
+	#np.savetxt(outdir_shap_contribs, shap_values)
+
+	ti_contribs_df = pd.DataFrame(ti_contribs, columns=feature_columns)
+	shap_contribs_df = pd.DataFrame(shap_values, columns=feature_columns)
+	ti_contribs_df.to_csv(outdir_ti_contribs)
+	shap_contribs_df.to_csv(outdir_shap_contribs)
+	
 	
 if __name__=="__main__":
 	parser = argparse.ArgumentParser(description='Parser for training RF on dataset')
@@ -75,6 +88,7 @@ if __name__=="__main__":
 	parser.add_argument('--datapoint_start', help='Starting index of dataset under analysis')
 	parser.add_argument('--datapoint_end', help='Ending index of dataset under analysis')
 	parser.add_argument('--TrainValTest_split', help='Tuple with split ratios of dataset')
+	parser.add_argument('--TimingOutFile', help='Run time of SHAP and TI')
 
 	args = vars(parser.parse_args())
 	# print(args['treatment_combination'])
@@ -83,4 +97,4 @@ if __name__=="__main__":
 	if ((args['datapoint_start'] is not None) and (args['datapoint_end'] is not None)):
 		main(args['dataset_dir'], args['model_dir'], args['outdir_ti_contribs'], args['outdir_shap_contribs'], int(args['datapoint_start']), int(args['datapoint_end']), make_tuple(args['TrainValTest_split']))
 	else:
-		main(args['dataset_dir'], args['model_dir'], args['outdir_ti_contribs'], args['outdir_shap_contribs'], TVT=make_tuple(args['TrainValTest_split']))
+		main(args['dataset_dir'], args['model_dir'], args['outdir_ti_contribs'], args['outdir_shap_contribs'], TVT=make_tuple(args['TrainValTest_split']), timing_outFile=args['TimingOutFile'])
