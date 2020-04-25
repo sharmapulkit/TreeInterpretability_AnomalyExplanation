@@ -24,10 +24,13 @@ def print_rbo(ranking1, ranking2):
                           sorted(zip(r2, idx_arr), key=lambda temp: -abs(temp[0]))]
         rank_correlation = rbo.RankingSimilarity(shap_contributions, ti_contributions).rbo()
         corr.append(rank_correlation)
-    print(pd.Series(corr).describe())
+#     print(pd.Series(corr).describe())
+#     plt.hist(corr) 
+    
     fig1 = plt.figure()
     ax1 = fig1.add_subplot(1, 1, 1)
     ax1.hist(corr) 
+
     return pd.Series(corr)    
 
 def print_rbo_topk(ranking1, ranking2, k):
@@ -51,12 +54,18 @@ def print_rbo_topk(ranking1, ranking2, k):
                           sorted(zip(r2, idx_arr), key=lambda temp: -abs(temp[0]))][:k]
         rank_correlation = rbo.RankingSimilarity(shap_contributions, ti_contributions).rbo()
         corr.append(rank_correlation)
-    print(k)
+
     print(pd.Series(corr).describe())
+    plt.hist(corr) 
+    return pd.Series(corr)    
+
+
+#     print(k)
+#     print(pd.Series(corr).describe())
     #fig1 = plt.figure()
     #ax1 = fig1.add_subplot(1, 1, 1)
     #ax1.hist(corr) 
-    return pd.Series(corr)    
+#     return pd.Series(corr)    
 
 
 
@@ -83,7 +92,6 @@ def print_set_overlap_top_k(ranking1, ranking2, k):
         overlap = overlap_len/k
         overlap_values.append(overlap)
     print(pd.Series(overlap_values).describe())
-    fig1 = plt.figure()
-    ax1 = fig1.add_subplot(1, 1, 1)
-    ax1.hist(overlap_values)
+    
+    plt.hist(overlap_values) 
     return pd.Series(overlap_values) 
