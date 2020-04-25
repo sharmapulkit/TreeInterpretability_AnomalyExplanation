@@ -40,15 +40,13 @@ class DataLoader():
 		for c in columns:
 		    col_min = self._data.loc[:, target].min()
 		    col_max = self._data.loc[:, target].max()
-		    Y_normalized[c] = (Y_normalized.loc[:, c] - col_min)/(col_max - col_min)
-		return Y_normalized
+		    self._data[c] = (self._data.loc[:, c] - col_min)/(col_max - col_min)
+		return 
 
 	####### Log normalize all columns ###########
 	def logNormalizeTargets(self):
-		# self._data = np.log(self._data + epsilon)
 		for target in list(self._target_columns):
 			self._data.loc[:, target] = np.log(self._data.loc[:, target] + epsilon)
-			# print(self._data.shape)
 			col_min = self._data.loc[:, target].min()
 			col_max = self._data.loc[:, target].max()
 			self._data[target]  = (self._data.loc[:, target] - col_min) / (col_max - col_min)
@@ -71,16 +69,6 @@ class DataLoader():
 
 		return X_train, logYtrain_normalized, X_val, logYval_normalized, X_test, logYtest_normalized
 
-	def preprocessDataSubjects(self):
-		self.logNormalizeTargets()
-	
-		X = self._data[self._feature_columns]
-		logY_normalized = self._data[self._target_columns]
-		unique_covs = []
-		
-
-		return X, logY_normalized
-	
 	def preprocessDataTreatmentCombo(self, treatmentCombo=(0,0,0), train_frac=0.7, val_frac=0.0, test_frac=0.3):
 		self.logNormalizeTargets()
 		t_comb = treatmentCombo
