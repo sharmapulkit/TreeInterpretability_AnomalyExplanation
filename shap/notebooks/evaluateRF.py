@@ -30,21 +30,6 @@ epsilon = 0.00001
 from postgresql_dataConfig import *
 ######################################################
 
-def compute_ti_attribution(model, data):
-	ti_start_time = time.time()
-	ti_preds, ti_biases, ti_contribs = ti.predict(model, data)
-	ti_end_time = time.time()
-	print("Time for Tree Interpretation:", ti_end_time - ti_start_time)
-	return ti_preds, ti_biases, ti_contribs, (ti_end_time - ti_start_time)
-
-def compute_shap_attribution(model, data):
-	shap_start_time = time.time()
-	explainer = shap.TreeExplainer(model)
-	shap_values = explainer.shap_values(data)
-	shap_end_time = time.time()
-	print("Time for SHAP explaination values:", shap_end_time - shap_start_time)
-	return shap_values, (shap_end_time - shap_start_time)
-
 def evaluateRF(modelPath, datasetPath, current_target, TrainValTest_split=(1.0,0.0,0.0), outdir=None):
 	"""
 	Train a Random Forest with given training dataset

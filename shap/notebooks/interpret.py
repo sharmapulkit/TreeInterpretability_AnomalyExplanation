@@ -51,7 +51,7 @@ def main(datasetPath, modelPath, outdir_ti_contribs, outdir_shap_contribs, dataS
 
 	if (dataEndPoint is not None):
 		if (dataEndPoint < len(Xte)):
-			Xsub = Xte[dataStartPoint:dataEndPoint]
+			Xsub = Xte[dataStartPoint:dataEndPoint+1]
 		else:
 			Xsub = Xte[dataStartPoint:]
 	else:
