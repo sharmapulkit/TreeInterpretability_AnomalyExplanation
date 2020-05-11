@@ -16,3 +16,4 @@ shap/notebooks/trainedModels*
 *flipped_bits.py
 *timingAnalysis.py
 *Plots*
+griffin/*
