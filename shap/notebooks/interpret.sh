@@ -87,26 +87,44 @@
 #for x in 1 3 5 7 9; do
 #	modelPath='/mnt/nfs/scratch1/s20psharma/TreeInterpretability/TimingAnalysis/TrainingSize/rf_postgresql_runtime_200combos_trainRatio0.'$x'.pk'
 #	for tr in 'index_level' 'page_cost' 'memory_level'; do
-#		dataPath='/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/topFeatAccuracy/testCases/'$tr'/testData/'
+#		dataPath='/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/topFeatAccuracy/testCases_inc1/'$tr'/'
 #		iter=0
 #		for filepath in $dataPath*.csv; do
 #			file=$(basename $filepath)
 #			iter=$(($iter+1))
-#			sbatch --partition=defq --job-name=job1 ~/nrun_inf.sh python interpret.py --dataset_dir=$dataPath$file --model_dir=$modelPath --outdir_ti_contribs=$dataPath'../interpreted_TI_outs_'${file:5:-4}'_'$tr'_trainRatio0.'$x'_increased2.txt' --outdir_shap_contribs=$dataPath'../interpreted_SHAP_outs_'"${file:5:-4}"'_'$tr'_trainRatio0.'$x'_increased2.txt' --TrainValTest_split='(0.0,0.0,1.0)' --TimingOutFile=$dataPath'../timing/runtime_outs_'"${file:5:-4}"'_'$tr'_trainRatio0.'$x'_increased2.txt';
+#			sbatch --partition=defq --job-name=job1 ~/nrun_inf.sh python interpret.py --dataset_dir=$dataPath$file --model_dir=$modelPath --outdir_ti_contribs=$dataPath'interpreted_TI_outs_'${file:5:-4}'_'$tr'_trainRatio0.'$x'_increased1.txt' --outdir_shap_contribs=$dataPath'interpreted_SHAP_outs_'"${file:5:-4}"'_'$tr'_trainRatio0.'$x'_increased1.txt' --TrainValTest_split='(0.0,0.0,1.0)' --TimingOutFile=$dataPath'timing/runtime_outs_'"${file:5:-4}"'_'$tr'_trainRatio0.'$x'_increased1.txt';
 #		done
 #	done;
 #done
 
 ######### Interpreatation over complete Test Set ###########
-for x in 1 3 5 7 9; do
+for trainR in 1 3 5 7 9; do
+	x=0.0$trainR
 	modelPath='/mnt/nfs/scratch1/s20psharma/TreeInterpretability/TimingAnalysis/TrainingSize/rf_postgresql_runtime_200combos_trainRatio0.'$x'.pk'
 	dataPath='/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/postgresTemplates/Subset/Test_subset/'
-	outPath='/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/topFeatAccuracy/testCases/baseline/'
+	outPath='/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/topFeatAccuracy/testCases_inc1/baseline/'
 	iter=0
 	for filepath in $dataPath*.csv; do
 		file=$(basename $filepath)
 		iter=$(($iter+1))
-		sbatch --partition=defq --job-name=job1 ~/nrun_inf.sh python interpret.py --dataset_dir=$dataPath$file --model_dir=$modelPath --outdir_ti_contribs=$outPath'interpreted_TI_outs_'${file:5:-4}'_trainRatio0.'$x'_baseline.txt' --outdir_shap_contribs=$outPath'interpreted_SHAP_outs_'"${file:5:-4}"'_trainRatio0.'$x'_baseline.txt' --TrainValTest_split='(0.0,0.0,1.0)' --TimingOutFile=$outPath'timing/runtime_outs_'"${file:5:-4}"'_trainRatio0.'$x'_baseline.txt';
+		sbatch --partition=defq --job-name=job1 ~/nrun_inf.sh python interpret.py --dataset_dir=$dataPath$file --model_dir=$modelPath --outdir_ti_contribs=$outPath'interpreted_TI_outs_'${file:5:-4}'_trainRatio0.'$x'_baseline.txt' --outdir_shap_contribs=$outPath'interpreted_SHAP_outs_'"${file:5:-4}"'_trainRatio0.'$x'_baseline.txt' --TrainValTest_split='(0.0,0.0,1.0)' --TimingOutFile=$outPath'timing/runtime_outs_'"${file:5:-4}"'_trainRatio0.'$x'_baseline_inc1.txt';
 	done;
 done
 
+#for x in 1 3 5 7 9; do
+#	modelPath='/mnt/nfs/scratch1/s20psharma/TreeInterpretability/TimingAnalysis/TrainingSize/rf_postgresql_runtime_200combos_trainRatio0.'$x'.pk'
+#	dataPath='/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/postgresTemplates/Subset/Test_subset/'
+#	outPath='/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/topFeatAccuracy/testCases_inc1/baseline/'
+#	iter=0
+#	for filepath in $dataPath*.csv; do
+#		file=$(basename $filepath)
+#		iter=$(($iter+1))
+#		sbatch --partition=defq --job-name=job1 ~/nrun_inf.sh python interpret.py --dataset_dir=$dataPath$file --model_dir=$modelPath --outdir_ti_contribs=$outPath'interpreted_TI_outs_'${file:5:-4}'_trainRatio0.'$x'_baseline.txt' --outdir_shap_contribs=$outPath'interpreted_SHAP_outs_'"${file:5:-4}"'_trainRatio0.'$x'_baseline.txt' --TrainValTest_split='(0.0,0.0,1.0)' --TimingOutFile=$outPath'timing/runtime_outs_'"${file:5:-4}"'_trainRatio0.'$x'_baseline_inc1.txt';
+#	done;
+#done
+########### Interpretation over Test Set in chunks ##############
+#datadir='/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/reClean/'
+#chunkSize=500
+#for (( testDataStart=0; testDataStart < 20000 ; testDataStart+=$chunkSize )); do
+#	sbatch --partition=defq --job-name=job1 ~/nrun_inf.sh python interpret.py --dataset_dir=$datadir'testPostgres_0.5.csv' --model_dir=$datadir'rf_postgresql_runtime_Nest200_maxD30.pk' --outdir_ti_contribs=$datadir'interpretations/interpreted_TI_outs_'$testDataStart'.txt' --outdir_shap_contribs='interpretations/interpreted_SHAP_outs_'$testDataStart'.txt' --TrainValTest_split='(0.0,0.0,1.0)' --datapoint_start=$testDataStart --datapoint_end=$(($testDataStart+$chunkSize))
+#done

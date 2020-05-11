@@ -10,4 +10,7 @@
 #done
 
 ############
-sbatch --partition=defq --job-name=job1 ~/nrun_inf.sh python rf_postgresql.py --save_model=True --evaluation=False --dataset_dir='/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/postgresTemplates/train_200_combos.csv' --current_target=runtime --num_tree_estimators=200 --max_depth=20 --treatmentTraining=False --outdir='/mnt/nfs/scratch1/s20psharma/TreeInterpretability/trainedNets/postgresTemplates/train_200_combos/rf_postgresql_runtime_200combos_2.pk' --TrainValTest_split='(1.0,0.0,0.0)'
+#sbatch --partition=defq --job-name=job1 ~/nrun_inf.sh python rf_postgresql.py --save_model=True --evaluation=False --dataset_dir='/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/postgresTemplates/train_200_combos.csv' --current_target=runtime --num_tree_estimators=200 --max_depth=20 --treatmentTraining=False --outdir='/mnt/nfs/scratch1/s20psharma/TreeInterpretability/trainedNets/postgresTemplates/train_200_combos/rf_postgresql_runtime_200combos_2.pk' --TrainValTest_split='(1.0,0.0,0.0)'
+
+
+sbatch --partition=defq --job-name=job1 ~/nrun_inf.sh python rf_postgresql.py --save_model=True --evaluation=False --dataset_dir='/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/reClean/another_case/trainPostgres_0.7.csv' --current_target=runtime --num_tree_estimators=300 --max_depth=50 --treatmentTraining=False --outdir='/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/reClean/another_case/rf_postgresql_runtime_Nest300_maxD50.pk' --TrainValTest_split='(1.0,0.0,0.0)'

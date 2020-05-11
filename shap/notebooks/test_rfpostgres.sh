@@ -10,12 +10,38 @@
 #done
 
 ################
- sbatch --partition=defq --job-name=job1 ~/nrun_inf.sh python evaluateRF.py --model_dir='/mnt/nfs/scratch1/s20psharma/TreeInterpretability/trainedNets/postgresTemplates/train_200_combos/rf_postgresql_runtime_200combos.pk' --dataset_dir='/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/postgresTemplates/test_200_combos.csv' --current_target=runtime --TrainValTest_split='(1.0,0.0,0.0)'
+#sbatch --partition=defq --job-name=job1 ~/nrun_inf.sh python evaluateRF.py --model_dir='/mnt/nfs/scratch1/s20psharma/TreeInterpretability/trainedNets/postgresTemplates/train_200_combos/rf_postgresql_runtime_200combos.pk' --dataset_dir='/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/postgres-results.csv' --current_target=runtime --TrainValTest_split='(1.0,0.0,0.0)'
 
 
 ############ Test on test set of combinations #############
 #testsetPath="/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/postgresTemplates/Subset/Test_subset/"
-#for filepath in $testsetPath*.csv; do
-#	file=$(basename $filepath)
-#	sbatch --partition=defq --job-name=job1 ~/nrun_inf.sh python evaluateRF.py --model_dir=$testsetPath'../../../../trainedNets/postgresTemplates/train_200_combos/rf_postgresql_runtime_200combos.pk' --dataset_dir=$testsetPath$file --outdir=$testsetPath'../evaluation/'"${file:0:-4}"'_evaluation.txt' --current_target=runtime --TrainValTest_split='(1.0,0.0,0.0)';
+testsetPath="/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/postgresTemplates/Subset/Test_subset/"
+modelPath="/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/reClean/"
+for filepath in $testsetPath*.csv; do
+	file=$(basename $filepath)
+	sbatch --partition=defq --job-name=job1 ~/nrun_inf.sh python evaluateRF.py --model_dir=$modelPath'rf_postgresql_runtime.pk' --dataset_dir=$testsetPath$file --outdir=$testsetPath'../evaluation_2/'"${file:0:-4}"'_evaluation.txt' --current_target=runtime --TrainValTest_split='(1.0,0.0,0.0)';
+done
+
+
+####### Evaluate Model 
+#testsetPath="/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/reClean/another_case/"
+#sbatch --partition=defq --job-name=job1 ~/nrun_inf.sh python evaluateRF.py --model_dir=$testsetPath'rf_postgresql_runtime_Nest300_maxD50.pk' --dataset_dir=$testsetPath'testPostgres_0.7.csv' --current_target=runtime --TrainValTest_split='(1.0,0.0,0.0)'
+
+#testsetPath="/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/postgresTemplates/"
+#modelPath="/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/reClean/"
+#sbatch --partition=defq --job-name=job1 ~/nrun_inf.sh python evaluateRF.py --model_dir=$modelPath'rf_postgresql_runtime.pk' --dataset_dir=$testsetPath'train_200_combos.csv' --current_target=runtime --TrainValTest_split='(1.0,0.0,0.0)'
+
+#testsetPath="/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/postgresTemplates/"
+#modelPath="/mnt/nfs/scratch1/s20psharma/TreeInterpretability/TimingAnalysis/TrainingSize/"
+#sbatch --partition=defq --job-name=job1 ~/nrun_inf.sh python evaluateRF.py --model_dir=$modelPath'rf_postgresql_runtime_200combos_trainRatio0.5.pk' --dataset_dir=$testsetPath'train_200_combos.csv' --current_target=runtime --TrainValTest_split='(1.0,0.0,0.0)'
+
+
+######## Evaluation over Testing Set with flipped bits ##########
+#dataPath='/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/postgresTemplates/Subset/Test_subset/'
+#for x in 1 3 5 7 9; do
+#	modelPath='/mnt/nfs/scratch1/s20psharma/TreeInterpretability/TimingAnalysis/TrainingSize/rf_postgresql_runtime_200combos_trainRatio0.0'$x'_2.pk'
+#	dataPath='/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/postgresTemplates/train_200_combos.csv'
+#	sbatch --partition=defq --job-name=job1 ~/nrun_inf.sh python evaluateRF.py --dataset_dir=$dataPath --model_dir=$modelPath --current_target=runtime --TrainValTest_split='(1.0,0.0,0.0)';
 #done
+
+

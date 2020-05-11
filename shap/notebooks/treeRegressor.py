@@ -54,6 +54,7 @@ class TreeRegression():
 		Ypred = self.model.predict(Xtest)
 		mse = metrics.mean_absolute_error(Ytest, Ypred)
 		r2 = metrics.r2_score(Ytest, Ypred)
+
 		return (mse, r2)
 
 	def grid_search_rf_depth(self, X_train, Y_train, X_val, Y_val, current_target, num_est=200):

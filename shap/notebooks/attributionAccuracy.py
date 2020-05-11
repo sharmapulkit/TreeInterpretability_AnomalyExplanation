@@ -10,7 +10,7 @@ import os
 from postgresql_dataConfig import *
 
 Path = "/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/topFeatAccuracy/"
-baselinesPath = Path + "_interpreted_SHAP_outs_500_Baseline.txt"
+#baselinesPath = Path + "_interpreted_SHAP_outs_500_Baseline.txt"
 # baselines = np.loadtxt(Path + "_interpreted_SHAP_outs_500_Baseline.txt") #pd.read_csv(Path + "_interpreted_SHAP_outs_500_Baseline.txt").values
 #tests = np.loadtxt(Path + "_interpreted_SHAP_outs_500_indexlevel_increased2.txt") #pd.read_csv(Path + "_interpreted_SHAP_outs_500_indexlevel_increased1.txt").values
 
@@ -83,30 +83,33 @@ def main():
 	#tr_var='page_cost'
 	tr_vars = ['index_level', 'page_cost', 'memory_level']
 	gt_idxs = [10, 11, 12]
-	attribMethod='SHAP'
+	attribMethod='TI'
 	for (tr_var, gt_idx) in zip(tr_vars, gt_idxs):
-			for _trainRatio in range(1, 10, 2):
+			for _trainRatio in range(5, 6, 2):
 				trainRatio = _trainRatio/10
 
-				baselinesPath = Path + "testCases/baseline"
-				counts_over_files = []
+				baselinesPath = Path + "testCases_inc1/baseline"
+				counts_over_files = np.array([0]*13)
 				total_num_files = 0 + 0.00001
 				total_tp = 0
 				accs = []
+				tpones = []
+				tptwos = []
+				tpthrees = []
 				#/interpreted_{}_outs_500_trainRatio{}_Baseline.txt".format(attribMethod, trainRatio)
 				for baselinefile in glob.glob(baselinesPath+"/*"+str(trainRatio)+"*.txt"):
 					if (attribMethod in baselinefile):
 						baselinefilesplit = baselinefile.split('_trainRatio')
-						intervened_file = baselinefilesplit[0].replace('baseline', tr_var) + tr_var + '_increased_2_'+ tr_var +'_trainRatio0.'+str(_trainRatio)+'_increased2.txt'
+						intervened_file = baselinefilesplit[0].replace('baseline', tr_var) + '_' + tr_var + '_increased_1_'+ tr_var +'_trainRatio0.'+str(_trainRatio)+'_increased1.txt'
 						intervened = pd.read_csv(intervened_file)
-						intervened = intervened.drop(columns=['Unnamed: 0'], axis=1)
+						#intervened = intervened.drop(columns=['Unnamed: 0'], axis=1)
 						intervened = intervened.values
 					
 						baselines = pd.read_csv(baselinefile)
-						baselines = baselines.drop(columns=['Unnamed: 0'], axis=1)
+						#baselines = baselines.drop(columns=['Unnamed: 0'], axis=1)
 						baselines = baselines.values
 						
-						np.random.seed(42)
+						np.random.seed(2)
 						randomBaseline = baselines[np.random.randint(len(baselines))]
 
 						#diff = (intervened - baselines)
@@ -126,6 +129,9 @@ def main():
 						#print(diff.shape)
 						
 						tp = 0
+						tpone = 0
+						tptwo = 0
+						tpthree = 0
 						counts = [0]*13
 						counts_baseline = counts.copy()
 						counts_tests = counts.copy()
@@ -137,20 +143,122 @@ def main():
 							counts_baseline[np.argmax(baselines[row_iter])] += 1
 							#counts_tests[np.argmax(shaptests[row_iter])] += 1
 							if (row_sorted[-1] == gt_idx): # or row_sorted[-2] == gt_idx):
+								tpone += 1
 								tp += 1
+							if (row_sorted[-1] == gt_idx or row_sorted[-2] == gt_idx):
+								tptwo += 1
+							if (row_sorted[-1] == gt_idx or row_sorted[-2] == gt_idx or row_sorted[-3] == gt_idx):
+								tpthree += 1
 
 						counts = np.array(counts)
 						counts_baseline = np.array(counts_baseline)
 						counts_tests = np.array(counts_tests)
 						
+						tpones.append(tpone)
+						tptwos.append(tptwo)
+						tpthrees.append(tpthree)
 						total_num_files += len(diff)
-						total_tp += tp
+						total_tp += tpone
+						accs.append(tp/len(diff))
+
+						counts_over_files += counts
+
+				#print("Top 1 Attr. Accuracy; TrainRatio: " + str(trainRatio) + ":", total_tp/total_num_files, " tr:", tr_var)
+				print("Top 1 Attr. Accuracy; TrainRatio: " + str(trainRatio) + ":", np.sum(tpones)/total_num_files, " tr:", tr_var)
+				#print("Top 2 Attr. Acc; TrainRatio: " + str(trainRatio) + ":", np.sum(tptwos)/total_num_files, "tr:", tr_var)
+				#print("Top 3 Attr. Acc; TrainRatio: " + str(trainRatio) + ":", np.sum(tpthrees)/total_num_files, "tr:", tr_var)
+				# print(np.mean(pd.Series(accs)))
+				print(counts_over_files)
+
+
+def main_special():
+	#tr_var='page_cost'
+	tr_vars = ['index_level', 'page_cost', 'memory_level']
+	gt_idxs = [10, 11, 12]
+	attribMethod='SHAP'
+	for (tr_var, gt_idx) in zip(tr_vars, gt_idxs):
+			for _trainRatio in range(5, 6, 2):
+				trainRatio = _trainRatio/10
+
+				baselinesPath = Path + "testCases/baseline"
+				dataPath = Path + "testCases/"+tr_var+"/testData/"
+				counts_over_files = []
+				total_num_files = 0 + 0.00001
+				total_tp = 0
+				accs = []
+				tpones = []
+				tptwos = []
+				tpthrees = []
+				#/interpreted_{}_outs_500_trainRatio{}_Baseline.txt".format(attribMethod, trainRatio)
+				for baselinefile in glob.glob(baselinesPath+"/*"+str(trainRatio)+"*.txt"):
+					if (attribMethod in baselinefile):
+						baselinefilesplit = baselinefile.split('_trainRatio')
+						intervened_file = baselinefilesplit[0].replace('baseline', tr_var) + tr_var + '_increased_2_'+ tr_var +'_trainRatio0.'+str(_trainRatio)+'_increased2.txt'
+						intervened = pd.read_csv(intervened_file)
+						intervened = intervened.drop(columns=['Unnamed: 0'], axis=1)
+						intervened = intervened.values
+					
+						baselines = pd.read_csv(baselinefile)
+						baselines = baselines.drop(columns=['Unnamed: 0'], axis=1)
+						baselines = baselines.values
+						
+						np.random.seed(42)
+						randomBaseline = baselines[np.random.randint(len(baselines))]
+
+						#diff = (intervened - baselines)
+						diff = intervened - randomBaseline
+						print(randomBaseline.shape)
+						diff = np.abs(diff)
+
+						testDataPointsfile = dataPath + 'covComb' + baselinefilesplit[0].split('outs_mb')[1] + tr_var + '_increased_2.csv'
+						testDataPoints = pd.read_csv(testDataPointsfile)
+						testDataPoints = testDataPoints.drop(columns=['Unnamed: 0', 'Unnamed: 0.1'], axis=1)
+						
+						
+						tp = 0
+						tpone = 0
+						tptwo = 0
+						tpthree = 0
+						counts = [0]*13
+						counts_baseline = counts.copy()
+						counts_tests = counts.copy()
+						epsilon = 0.01
+						for row_iter, row in enumerate(diff):
+							if (testDataPoints.iloc[row_iter][tr_var] == 2): 
+									row_sorted = np.argsort(row) #/np.abs(baselines[row_iter]))
+
+									counts[row_sorted[-1]] += 1
+									counts_baseline[np.argmax(baselines[row_iter])] += 1
+									#counts_tests[np.argmax(shaptests[row_iter])] += 1
+									if (row_sorted[-1] == gt_idx): # or row_sorted[-2] == gt_idx):
+										tpone += 1
+										tp += 1
+									if (row_sorted[-1] == gt_idx or row_sorted[-2] == gt_idx):
+										tptwo += 1
+									if (row_sorted[-1] == gt_idx or row_sorted[-2] == gt_idx or row_sorted[-3] == gt_idx):
+										tpthree += 1
+									total_num_files += 1
+
+						counts = np.array(counts)
+						counts_baseline = np.array(counts_baseline)
+						counts_tests = np.array(counts_tests)
+						
+						tpones.append(tpone)
+						tptwos.append(tptwo)
+						tpthrees.append(tpthree)
+						#total_num_files += len(diff)
+						total_tp += tpone
 						accs.append(tp/len(diff))
 
 						counts_over_files.append(counts)
 
-				print("Top 1 Attr. Accuracy; TrainRaio: " + str(trainRatio) + ":", total_tp/total_num_files, " tr:", tr_var)
+				#print("Top 1 Attr. Accuracy; TrainRatio: " + str(trainRatio) + ":", total_tp/total_num_files, " tr:", tr_var)
+				print("Top 1 Attr. Accuracy; TrainRatio: " + str(trainRatio) + ":", np.sum(tpones)/total_num_files, " tr:", tr_var)
+				print("Top 2 Attr. Acc; TrainRatio: " + str(trainRatio) + ":", np.sum(tptwos)/total_num_files, "tr:", tr_var)
+				print("Top 3 Attr. Acc; TrainRatio: " + str(trainRatio) + ":", np.sum(tpthrees)/total_num_files, "tr:", tr_var)
 				# print(np.mean(pd.Series(accs)))
 
+
+
 if __name__=="__main__":
-	main()
+	main_special()
