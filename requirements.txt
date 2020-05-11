@@ -1,3 +1,4 @@
 # Install these
 pip install shap
 pip install treeinterpreter
+pip install -e git+https://github.com/changyaochen/rbo.git@master#egg=rbo
