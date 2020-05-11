@@ -138,6 +138,7 @@ def main( SAVE_RF, outdir, datasetPath, current_target, rf_n_estimators, rf_max_
 	start_time = time.time()
 	
 	dataloader = DataLoader(datasetPath, covariate_columns, treatment_columns, target_columns)
+	dataloader.shuffleData()
 	Xtr, logYtr, Xval, logYval, Xte, logYte = dataloader.preprocessData(train_frac=TrainValTest_split[0], val_frac=TrainValTest_split[1], test_frac=TrainValTest_split[2])
 	
 	data_preprocessed_time = time.time()

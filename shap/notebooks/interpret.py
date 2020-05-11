@@ -75,8 +75,8 @@ def main(datasetPath, modelPath, outdir_ti_contribs, outdir_shap_contribs, dataS
 
 	ti_contribs_df = pd.DataFrame(ti_contribs, columns=feature_columns)
 	shap_contribs_df = pd.DataFrame(shap_values, columns=feature_columns)
-	ti_contribs_df.to_csv(outdir_ti_contribs)
-	shap_contribs_df.to_csv(outdir_shap_contribs)
+	ti_contribs_df.to_csv(outdir_ti_contribs, index=False)
+	shap_contribs_df.to_csv(outdir_shap_contribs, index=False)
 	
 	
 if __name__=="__main__":

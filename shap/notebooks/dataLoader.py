@@ -30,7 +30,8 @@ class DataLoader():
 		return self._data
 	
 	def shuffleData(self):
-		self._data = shuffle(self._data)
+		self._data = self._data.sample(frac=1.0, random_state=random_seed, replace=False)
+		return
 	
 	def getShape(self):
 		return self._data.shape

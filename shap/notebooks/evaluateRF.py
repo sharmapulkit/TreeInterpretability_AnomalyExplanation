@@ -57,6 +57,8 @@ def evaluateRF(modelPath, datasetPath, current_target, TrainValTest_split=(1.0,0
 			f.write('\n')
 			f.write("R2:"+ str(testR2))
 			f.write('\n')
+			f.write("Size:"+str(len(X)))
+			f.write('\n')
 
 
 if __name__=="__main__":
