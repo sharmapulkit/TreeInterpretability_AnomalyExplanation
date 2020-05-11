@@ -97,7 +97,7 @@
 #	done;
 #done
 
-######### Interpreatation over complete Test Set ###########
+######### Interpretation over complete Test Set ###########
 for trainR in 1 3 5 7 9; do
 	x=0.0$trainR
 	modelPath='/mnt/nfs/scratch1/s20psharma/TreeInterpretability/TimingAnalysis/TrainingSize/rf_postgresql_runtime_200combos_trainRatio0.'$x'.pk'

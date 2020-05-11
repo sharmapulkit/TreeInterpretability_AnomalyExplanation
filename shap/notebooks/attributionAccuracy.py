@@ -261,4 +261,4 @@ def main_special():
 
 
 if __name__=="__main__":
-	main_special()
+	main()
