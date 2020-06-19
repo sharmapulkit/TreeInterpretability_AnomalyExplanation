@@ -1,0 +1,9 @@
+Top 1 Attr. Accuracy; TrainRatio: 0.5: 0.6439649664063658  tr: index_level
+[ 1512   890   358   568   345   556  1783  1408     0   124 14117    82
+   179]
+Top 1 Attr. Accuracy; TrainRatio: 0.5: 0.8159383264227998  tr: page_cost
+[  221    81    20    71     8   131   540    88     0   162   117 17887
+  2596]
+Top 1 Attr. Accuracy; TrainRatio: 0.5: 0.8292582789757968  tr: memory_level
+[  237   113    96   167   101   101   653   128     0   136    81  1930
+ 18179]
