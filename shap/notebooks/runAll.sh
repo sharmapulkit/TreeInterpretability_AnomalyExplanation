@@ -8,6 +8,11 @@
 ######### Evaluate Trained Random Forest to obtain R2 Score ########
 
 
+
+python pretrain.py
+sh pretrain.sh
+python flipped_bits.py
+
 ######### Compute Attribution value variance ###########
 python attributionVariance.py
 

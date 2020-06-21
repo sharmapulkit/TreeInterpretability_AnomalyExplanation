@@ -314,7 +314,50 @@ def main_attrib_accuracy():
 	print("Top 1 Attribution Accuracy_:", tp/len(diff))
 
 
+def main_attrib_accuracy_all():
+	feats=['index_level', 'page_cost', 'memory_level']
+	gt_indices = {feats[0]:10, feats[1]:11, feats[2]:12}
+	attribMethods=['SHAP', 'TI']
+	
+	Path = '/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/submission/submissionAll/Intervened/explicit_intervention/'
+
+	for feat in feats:
+		for attribMethod in attribMethods:
+			gt_idx = gt_indices[feat]
+			tp = 0
+			counts = [0]*13
+			counts_baseline = counts.copy()
+			counts_tests = counts.copy()
+			epsilon = 0.01
+			total = 0
+			for filename in glob.glob(os.path.join(Path, 'baseline', 'explanations', 'interpreted_{}*'.format(attribMethod))):
+				filename = os.path.basename(filename)
+				baselinesPath = os.path.join(Path, 'baseline', 'explanations', filename)
+				shaptestsPath = os.path.join(Path, feat, "explanations", filename)
+				
+				baselines = pd.read_csv(baselinesPath)
+				baselines = baselines.values
+				
+				shaptests = pd.read_csv(shaptestsPath)
+				shaptests = shaptests.values
+				
+				diff = (shaptests - baselines)
+				total += len(diff)
+				
+				for row_iter, row in enumerate(diff):
+					row_sorted = np.argsort(row) #/np.abs(baselines[row_iter]))
+					counts[row_sorted[-1]] += 1
+					counts_baseline[np.argmax(baselines[row_iter])] += 1
+					counts_tests[np.argmax(shaptests[row_iter])] += 1
+					if (row_sorted[-1] == gt_idx): # or row_sorted[-2] == gt_idx):
+						tp += 1
+				
+			counts = np.array(counts)
+			counts_baseline = np.array(counts_baseline)
+			counts_tests = np.array(counts_tests)
+			
+			print("Att Acc {}: {}:".format(feat, attribMethod), tp/total)
 
 if __name__=="__main__":
-	main_attrib_accuracy()
+	main_attrib_accuracy_all()
 	# main1()
