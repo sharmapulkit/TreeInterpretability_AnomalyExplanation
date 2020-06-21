@@ -70,6 +70,16 @@ class DataLoader():
 
 		return X_train, logYtrain_normalized, X_val, logYval_normalized, X_test, logYtest_normalized
 
+	def preprocessDataSubjects(self):
+		self.logNormalizeTargets()
+	
+		X = self._data[self._feature_columns]
+		logY_normalized = self._data[self._target_columns]
+		unique_covs = []
+		
+
+		return X, logY_normalized
+	
 	def preprocessDataTreatmentCombo(self, treatmentCombo=(0,0,0), train_frac=0.7, val_frac=0.0, test_frac=0.3):
 		self.logNormalizeTargets()
 		t_comb = treatmentCombo
