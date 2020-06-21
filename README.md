@@ -1,5 +1,10 @@
 1. Create Templates: run makeTemplates.py with appropriate PATHs
-
+2. Run pretrain.py to select a subset from Templates with appropriate thresholds.
+3. Run pretrain.sh to concatenate the shortlisted templates into a single file
+4. Run train_rfpostgres.sh with appropriate model specifications and paths
+5. Run flipped_bit.py to generate explicit Intervention Dataset
+6. Run iterpret.sh to interpret all the intervened and baseline data points
+7. Run attributionAccuracy.py to compute Explicit Interventional Accuracy
 
 
 
