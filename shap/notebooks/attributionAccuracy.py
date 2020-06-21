@@ -320,7 +320,6 @@ def main_attrib_accuracy_all():
 	attribMethods=['SHAP', 'TI']
 	
 	Path = '/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/submission/submissionAll/Intervened/explicit_intervention/'
-
 	for feat in feats:
 		for attribMethod in attribMethods:
 			gt_idx = gt_indices[feat]

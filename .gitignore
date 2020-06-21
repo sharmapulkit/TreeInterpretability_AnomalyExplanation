@@ -17,3 +17,4 @@ shap/notebooks/trainedModels*
 *timingAnalysis.py
 *Plots*
 griffin/*
+*.orig
