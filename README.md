@@ -1,3 +1,9 @@
+1. Create Templates: run makeTemplates.py with appropriate PATHs
+
+
+
+
+
 CODE:
 Navigate to ./shap/notebooks for most of the code:
 
