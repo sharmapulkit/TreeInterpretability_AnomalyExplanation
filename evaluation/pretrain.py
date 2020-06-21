@@ -10,6 +10,7 @@ import os
 import glob
 import pickle as pk
 import sklearn
+import argparse
 
 from sklearn.cluster import KMeans
 from sklearn import metrics
@@ -17,12 +18,10 @@ from scipy.spatial.distance import cdist
 import itertools
 from sklearn.utils import shuffle
 from scipy import stats
-from pathlib import Path
 
 from postgresql_dataConfig import *
 
 shuffleSeed = 1
-
 
 NUMBER_OF_POINTS_THRESHOLD = 600
 MIN_NUMBER_OF_POINTS_THRESHOLD = 20
@@ -69,6 +68,18 @@ def select_few_point_templates():
 	print("Templates with less than {} data points copied Successful".format(NUMBER_OF_POINTS_THRESHOLD))
 
 if __name__=="__main__":
+	parser = argparse.ArgumentParser()
+	parser.add_argument('--max_num_points_thresh')
+	parser.add_argument('--train_frac')
+	parser.add_argument('--ippath')
+	parser.add_argument('--oppath')
+	args = vars(parser.parse_args())
+
+	NUMBER_OF_POINTS_THRESHOLD = int(args['max_num_points_thresh'])
+	TRAIN_FRAC = int(args['train_frac'])/100
+	PATH = args['ippath']
+	TARGET_PATH = args['oppath']
+
 	split_train_test_templates()
 
 
