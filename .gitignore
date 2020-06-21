@@ -18,3 +18,5 @@ shap/notebooks/trainedModels*
 *Plots*
 griffin/*
 *.orig
+*checkpoint*
+src/*
