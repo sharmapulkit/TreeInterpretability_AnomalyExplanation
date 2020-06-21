@@ -98,18 +98,18 @@
 #done
 
 ######### Interpretation over complete Test Set ###########
-for trainR in 1 3 5 7 9; do
-	x=0.0$trainR
-	modelPath='/mnt/nfs/scratch1/s20psharma/TreeInterpretability/TimingAnalysis/TrainingSize/rf_postgresql_runtime_200combos_trainRatio0.'$x'.pk'
-	dataPath='/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/postgresTemplates/Subset/Test_subset/'
-	outPath='/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/topFeatAccuracy/testCases_inc1/baseline/'
-	iter=0
-	for filepath in $dataPath*.csv; do
-		file=$(basename $filepath)
-		iter=$(($iter+1))
-		sbatch --partition=defq --job-name=job1 ~/nrun_inf.sh python interpret.py --dataset_dir=$dataPath$file --model_dir=$modelPath --outdir_ti_contribs=$outPath'interpreted_TI_outs_'${file:5:-4}'_trainRatio0.'$x'_baseline.txt' --outdir_shap_contribs=$outPath'interpreted_SHAP_outs_'"${file:5:-4}"'_trainRatio0.'$x'_baseline.txt' --TrainValTest_split='(0.0,0.0,1.0)' --TimingOutFile=$outPath'timing/runtime_outs_'"${file:5:-4}"'_trainRatio0.'$x'_baseline_inc1.txt';
-	done;
-done
+#for trainR in 1 3 5 7 9; do
+#	x=0.0$trainR
+#	modelPath='/mnt/nfs/scratch1/s20psharma/TreeInterpretability/TimingAnalysis/TrainingSize/rf_postgresql_runtime_200combos_trainRatio0.'$x'.pk'
+#	dataPath='/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/postgresTemplates/Subset/Test_subset/'
+#	outPath='/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/topFeatAccuracy/testCases_inc1/baseline/'
+#	iter=0
+#	for filepath in $dataPath*.csv; do
+#		file=$(basename $filepath)
+#		iter=$(($iter+1))
+#		sbatch --partition=defq --job-name=job1 ~/nrun_inf.sh python interpret.py --dataset_dir=$dataPath$file --model_dir=$modelPath --outdir_ti_contribs=$outPath'interpreted_TI_outs_'${file:5:-4}'_trainRatio0.'$x'_baseline.txt' --outdir_shap_contribs=$outPath'interpreted_SHAP_outs_'"${file:5:-4}"'_trainRatio0.'$x'_baseline.txt' --TrainValTest_split='(0.0,0.0,1.0)' --TimingOutFile=$outPath'timing/runtime_outs_'"${file:5:-4}"'_trainRatio0.'$x'_baseline_inc1.txt';
+#	done;
+#done
 
 #for x in 1 3 5 7 9; do
 #	modelPath='/mnt/nfs/scratch1/s20psharma/TreeInterpretability/TimingAnalysis/TrainingSize/rf_postgresql_runtime_200combos_trainRatio0.'$x'.pk'
@@ -122,9 +122,26 @@ done
 #		sbatch --partition=defq --job-name=job1 ~/nrun_inf.sh python interpret.py --dataset_dir=$dataPath$file --model_dir=$modelPath --outdir_ti_contribs=$outPath'interpreted_TI_outs_'${file:5:-4}'_trainRatio0.'$x'_baseline.txt' --outdir_shap_contribs=$outPath'interpreted_SHAP_outs_'"${file:5:-4}"'_trainRatio0.'$x'_baseline.txt' --TrainValTest_split='(0.0,0.0,1.0)' --TimingOutFile=$outPath'timing/runtime_outs_'"${file:5:-4}"'_trainRatio0.'$x'_baseline_inc1.txt';
 #	done;
 #done
+
+
 ########### Interpretation over Test Set in chunks ##############
-#datadir='/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/reClean/'
-#chunkSize=500
-#for (( testDataStart=0; testDataStart < 20000 ; testDataStart+=$chunkSize )); do
-#	sbatch --partition=defq --job-name=job1 ~/nrun_inf.sh python interpret.py --dataset_dir=$datadir'testPostgres_0.5.csv' --model_dir=$datadir'rf_postgresql_runtime_Nest200_maxD30.pk' --outdir_ti_contribs=$datadir'interpretations/interpreted_TI_outs_'$testDataStart'.txt' --outdir_shap_contribs='interpretations/interpreted_SHAP_outs_'$testDataStart'.txt' --TrainValTest_split='(0.0,0.0,1.0)' --datapoint_start=$testDataStart --datapoint_end=$(($testDataStart+$chunkSize))
+#datadir='/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/postgresTemplates/Subset/'
+#datadir='/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/submission/templates_intervened/'
+#modeldir='/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/submission/'
+#chunkSize=200
+#for (( testDataStart=0; testDataStart < 22000 ; testDataStart+=$chunkSize )); do
+#	sbatch --partition=defq --job-name=job1 ~/nrun_inf.sh python interpret.py --dataset_dir=$datadir'test_allCombs_index_level.csv' --model_dir=$modeldir'rf_postgresql_runtime_Nest200_maxD20.pk' --outdir_ti_contribs=$modeldir'interpretations/interpreted_TI_outs_'$testDataStart'.txt' --outdir_shap_contribs=$modeldir'interpretations/interpreted_SHAP_outs_'$testDataStart'.txt' --TrainValTest_split='(0.0,0.0,1.0)' --datapoint_start=$testDataStart --datapoint_end=$(($testDataStart+$chunkSize))
 #done
+
+
+datadir='/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/submission/templates_intervened/'
+modeldir='/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/submission/'
+chunkSize=200
+for (( testDataStart=0; testDataStart < 22000 ; testDataStart+=$chunkSize )); do
+	sbatch --partition=defq --job-name=job1 ~/nrun_inf.sh python interpret.py --dataset_dir=$datadir'index_level/test_allCombs_index_level.csv' --model_dir=$modeldir'rf_postgresql_runtime_Nest200_maxD20.pk' --outdir_ti_contribs=$modeldir'interpretations_intervened/index_level/interpreted_TI_outs_'$testDataStart'.txt' --outdir_shap_contribs=$modeldir'interpretations_intervened/index_level/interpreted_SHAP_outs_'$testDataStart'.txt' --TrainValTest_split='(0.0,0.0,1.0)' --datapoint_start=$testDataStart --datapoint_end=$(($testDataStart+$chunkSize))
+done
+
+
+
+
+
