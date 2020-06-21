@@ -15,12 +15,12 @@
 
 ############ Test on test set of combinations #############
 #testsetPath="/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/postgresTemplates/Subset/Test_subset/"
-testsetPath="/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/postgresTemplates/Subset/Test_subset/"
-modelPath="/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/reClean/"
-for filepath in $testsetPath*.csv; do
-	file=$(basename $filepath)
-	sbatch --partition=defq --job-name=job1 ~/nrun_inf.sh python evaluateRF.py --model_dir=$modelPath'rf_postgresql_runtime.pk' --dataset_dir=$testsetPath$file --outdir=$testsetPath'../evaluation_2/'"${file:0:-4}"'_evaluation.txt' --current_target=runtime --TrainValTest_split='(1.0,0.0,0.0)';
-done
+#testsetPath="/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/postgresTemplates/Subset/Test_subset/"
+#modelPath="/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/reClean/"
+#for filepath in $testsetPath*.csv; do
+#	file=$(basename $filepath)
+#	sbatch --partition=defq --job-name=job1 ~/nrun_inf.sh python evaluateRF.py --model_dir=$modelPath'rf_postgresql_runtime.pk' --dataset_dir=$testsetPath$file --outdir=$testsetPath'../evaluation_2/'"${file:0:-4}"'_evaluation.txt' --current_target=runtime --TrainValTest_split='(1.0,0.0,0.0)';
+#done
 
 
 ####### Evaluate Model 
@@ -43,5 +43,12 @@ done
 #	dataPath='/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/postgresTemplates/train_200_combos.csv'
 #	sbatch --partition=defq --job-name=job1 ~/nrun_inf.sh python evaluateRF.py --dataset_dir=$dataPath --model_dir=$modelPath --current_target=runtime --TrainValTest_split='(1.0,0.0,0.0)';
 #done
+
+
+testsetPath="/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/postgresTemplates/Subset/"
+#testsetPath="/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/submission/templates_intervened/index_level/"
+modelPath="/mnt/nfs/scratch1/s20psharma/TreeInterpretability/dataset/submission/"
+sbatch --partition=defq --job-name=job1 ~/nrun_inf.sh python evaluateRF.py --model_dir=$modelPath'rf_postgresql_runtime_Nest200_maxD20.pk' --dataset_dir=$testsetPath'test_allCombs_header.csv' --current_target=runtime --TrainValTest_split='(1.0,0.0,0.0)'
+
 
 
